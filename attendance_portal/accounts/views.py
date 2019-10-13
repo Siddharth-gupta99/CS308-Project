@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.views.generic import CreateView
 from .models import User
 from .forms import TeacherSignUpForm, StudentSignUpForm
+from django.contrib.auth.decorators import login_required
 
 def signup(request):
     return render(request, 'signup.html')
@@ -36,3 +37,9 @@ class TeacherSignUpView(CreateView):
         login(self.request, user)
         return redirect('home')        
 
+@login_required
+def home(request):
+    return render(request, 'home.html')
+
+def signup(request):
+    return render(request, 'templates/signup.html')
