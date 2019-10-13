@@ -7,12 +7,12 @@ from .forms import TeacherSignUpForm, StudentSignUpForm
 from django.contrib.auth.decorators import login_required
 
 def signup(request):
-    return render(request, 'signup.html')
+    return render(request, 'accounts/signup.html')
 
 class StudentSignUpView(CreateView):
     model = User
     form_class = StudentSignUpForm
-    template_name = 'signup_do.html'
+    template_name = 'accounts/student_signup.html'
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'student'
@@ -26,7 +26,7 @@ class StudentSignUpView(CreateView):
 class TeacherSignUpView(CreateView):
     model = User
     form_class = TeacherSignUpForm
-    template_name = 'signup_do.html'
+    template_name = 'accounts/teacher_signup.html'
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'teacher'
@@ -37,9 +37,6 @@ class TeacherSignUpView(CreateView):
         login(self.request, user)
         return redirect('home')        
 
-@login_required
+# @login_required
 def home(request):
-    return render(request, 'home.html')
-
-def signup(request):
-    return render(request, 'templates/signup.html')
+    return render(request, 'base.html')

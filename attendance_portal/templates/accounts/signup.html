@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% block title %} Signup {% endblock %}
+
+{% block content %} 
+
+    <div class='middle'>
+        <div class='container'>
+            <br> <br>
+            <div class='row'>
+                <h3>Sign up</h3>
+            </div>
+            <br>
+            <div class='row'>
+                Sign up as a &nbsp; <a href="{% url 'signup_student' %}"> Student. </a> 
+            </div>
+            <br>
+            <div class='row'>
+                Sign up as a &nbsp; <a href="{% url 'signup_teacher' %}"> Teacher. </a> 
+            </div>
+            
+        </div>
+    </div>    
+
+{% endblock %}

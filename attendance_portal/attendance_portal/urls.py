@@ -24,7 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('signup/', accounts_views.signup , name='signup'),
     path('signup/student/', accounts_views.StudentSignUpView.as_view(), name='signup_student'),
-    path('signup/faculty/', accounts_views.TeacherSignUpView.as_view(), name='signup_faculty'),
+    path('signup/teacher/', accounts_views.TeacherSignUpView.as_view(), name='signup_teacher'),
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html', authentication_form=LoginForm), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
