@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %} Student Home {% endblock %}
+
+{% block content %}
+
+        <div class='container'>
+            <br>
+            <div class='row'>
+                <h3>Courses for Enrollment</h3>
+            </div>
+            
+
+            <table class="table">
+                <thead class="thead-inverse">
+                    <tr>
+                    <th>Task</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>
+                        <a href="/students/course/course.name">{{ course.name }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table> 
+        </div>    
+{% endblock %}

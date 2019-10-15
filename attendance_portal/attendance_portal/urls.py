@@ -16,11 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 import accounts.views as accounts_views
+import attendance.views as attendance_views
 from accounts.forms import LoginForm
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('', accounts_views.home, name='home'),
+    path('', attendance_views.home, name='home'),
     path('admin/', admin.site.urls),
     path('signup/', accounts_views.signup , name='signup'),
     path('signup/student/', accounts_views.StudentSignUpView.as_view(), name='signup_student'),

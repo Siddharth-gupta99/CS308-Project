@@ -38,5 +38,3 @@ class TeacherSignUpView(CreateView):
         return redirect('home')        
 
 # @login_required
-def home(request):
-    return render(request, 'base.html')

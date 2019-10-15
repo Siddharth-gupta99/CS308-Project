@@ -17,7 +17,7 @@
 <body>
 
   <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
         <a class="navbar-brand" href="{% url 'home' %}"><h2>Attendance Portal</h2></a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,21 +26,22 @@
         <div class="collapse navbar-collapse" id="navbarText">
             {% if user.is_authenticated %}  
             <ul class="navbar-nav mr-auto">
+
+                {% if user.is_student %}
                 <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <h3> <font color='gray'>Student</font></h3>
                 </li>
-                <li class="nav-item">
-                <a class="nav-link" href="#">Features</a>
+                <li class="nav-item active">
+                <!-- <a class="nav-link" href="student_courses">My Courses<span class="sr-only">(current)</span></a> -->
                 </li>
-                <li class="nav-item">
-                <a class="nav-link" href="#">Pricing</a>
-                </li>
+                {% endif %}
+                
             </ul>
 
             <span class="navbar-text">
                 <a class="btn btn-primary" href="{% url 'logout' %}"> <h4> Logout </h4></a>
             </span>
-            
+
             {% endif %}
             <span class="navbar-text">
                 {% if not user.is_authenticated %}
@@ -58,12 +59,6 @@
             </span>
         </div>
     </nav>
-
-  <!-- Page Content --> 
-  {% if user.is_authenticated %}
-  <p> User is student = {{ user.is_student }} </p>
-  <p> User is teacher = {{ user.is_teacher }} </p>
-  {% endif %}
 
   {% block content %}{% endblock %}
 
