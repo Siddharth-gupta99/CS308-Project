@@ -32,6 +32,8 @@ def student_course(request, course_name):
     enrolled = request.user.enrollments.values('course')
     is_enrolled =  course.name in [item['course'] for item in enrolled]
     # print(course, enrolled, is_enrolled)
+    lectures = []
+    attendance_per = 1
 
     if not is_enrolled:
         if request.method == 'POST':
@@ -40,4 +42,32 @@ def student_course(request, course_name):
             enrollment.save()
             return redirect('student_course', course_name)
 
-    return render(request, 'attendance/student_course.html', {'is_enrolled': is_enrolled, 'course': course})
+    else:
+        alllectures = Lecture.objects.filter(course=course).order_by('time')  
+        lecno = 0  
+        user = request.user
+        num_attendend = 0
+
+        for lecture in alllectures:
+            lecno += 1
+            time = lecture.time
+            attended = Attendance.objects.filter(lecture=lecture).filter(student=user).exists()
+            
+            if attended:
+                num_attendend += 1
+
+            lectures.append({
+                'lecno': lecno,
+                'time': time,
+                'attended': attended
+            })
+
+            
+        if lecno:
+            attendance_per = num_attendend / lecno
+        attendance_per *= 100
+
+
+    # print(lectures)
+    return render(request, 'attendance/student_course.html', {
+        'is_enrolled': is_enrolled, 'course': course, 'lectures': lectures, 'attendance_per': attendance_per})

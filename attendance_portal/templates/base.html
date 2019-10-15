@@ -31,22 +31,24 @@
                 <li class="nav-item active">
                     <h3> <font color='gray'>Student &nbsp; &nbsp; &nbsp;</font></h3>
                 </li>
-                <li class="nav-item active">
-                    <a class="btn btn-secondary" href="{% url 'student_courses' %}"> <h4> My Courses </h4></a>
-                </li>
                 {% endif %}
                 
             </ul>
 
             <span class="navbar-text">
+                {% if user.is_student %}
+                    <a class="btn btn-secondary" href="{% url 'student_courses' %}"> <h4> My Courses </h4></a>
+                    &nbsp;
+                {% endif %}
                 <a class="btn btn-primary" href="{% url 'logout' %}"> <h4> Logout </h4></a>
             </span>
 
             {% endif %}
-            <span class="navbar-text">
+            <span class="navbar-text">   
                 {% if not user.is_authenticated %}
         
                 {% if request.path != "/login/" %}
+                    &nbsp;
                     <a class="btn btn-primary" href="{% url 'login' %}"> <h4> Login </h4></a>
                 {% endif %}
                 

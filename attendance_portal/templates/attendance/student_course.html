@@ -14,11 +14,45 @@
             <div class='row'>
                 <h3>{{ course.name }}</h3>
             </div>
-
+            <br>
+    
             {% if is_enrolled %}
                 <div class='row'>
-                    <h3>You're enrolled</h3>
+                    <h4>Your attendance is {{ attendance_per }} %</h4>
                 </div> 
+                
+                <br>
+                <div class='row'>
+                    <h3>Lectures</h3>
+                </div>
+                <table class="table">
+                    <thead class="thead-inverse">
+                        <tr>
+                        <th>Lecture No.</th>
+                        <th>Time</th>
+                        <th>Attended</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lecture in lectures %}
+                        <tr>
+                            <td>
+                                {{ lecture.lecno }}
+                            </td>
+                            <td class="align-middle">
+                                {{ lecture.time }}
+                            </td>
+                            <td class="align-middle">
+                                {% if lecture.attended %}
+                                    <font color='green'>Yes</font>
+                                {% else %}
+                                    <font color='red'>No</font>
+                                {% endif %}        
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             {% else %}
                 <form method="post" novalidate>
                     {% csrf_token %}
