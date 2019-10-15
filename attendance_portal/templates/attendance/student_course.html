@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ course.name }} {% endblock %}
+
+{% block content %}
+
+        <div class='container'>
+            <br>
+
+            <div class='row'>
+                 <h3>Hello,  {{ request.user.first_name }}</h3>
+            </div>
+            <br>
+            <div class='row'>
+                <h3>{{ course.name }}</h3>
+            </div>
+
+            {% if is_enrolled %}
+                <div class='row'>
+                    <h3>You're enrolled</h3>
+                </div> 
+            {% else %}
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Enroll me</button>
+                </form>    
+            {% endif %}
+        </div>    
+{% endblock %}

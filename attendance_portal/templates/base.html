@@ -29,10 +29,10 @@
 
                 {% if user.is_student %}
                 <li class="nav-item active">
-                    <h3> <font color='gray'>Student</font></h3>
+                    <h3> <font color='gray'>Student &nbsp; &nbsp; &nbsp;</font></h3>
                 </li>
                 <li class="nav-item active">
-                <!-- <a class="nav-link" href="student_courses">My Courses<span class="sr-only">(current)</span></a> -->
+                    <a class="btn btn-secondary" href="{% url 'student_courses' %}"> <h4> My Courses </h4></a>
                 </li>
                 {% endif %}
                 

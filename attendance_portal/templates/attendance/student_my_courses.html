@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Student Home {% endblock %}
+{% block title %} My Courses {% endblock %}
 
 {% block content %}
 
@@ -12,7 +12,7 @@
             </div>
             <br>
             <div class='row'>
-                <h3>Courses for Enrollment</h3>
+                <h3>Your Courses</h3>
             </div>
             
 
@@ -26,7 +26,7 @@
                     {% for course in courses %}
                     <tr>
                         <td>
-                        <a href="/students/course/{{ course }}">{{ course }}</a>
+                            <a href="/students/course/{{ course }}">{{ course }}</a>
                         </td>
                     </tr>
                     {% endfor %}
