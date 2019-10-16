@@ -6,6 +6,11 @@
 
         <div class='container'>
             <br>
+
+            <div class='row'>
+                 <h3>Hello,  {{ request.user.first_name }}</h3>
+            </div>
+            <br>
             <div class='row'>
                 <h3>Courses for Enrollment</h3>
             </div>
@@ -14,14 +19,14 @@
             <table class="table">
                 <thead class="thead-inverse">
                     <tr>
-                    <th>Task</th>
+                    <th>Course</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for course in courses %}
                     <tr>
                         <td>
-                        <a href="/students/course/course.name">{{ course.name }}</a>
+                        <a href="/students/course/{{ course }}">{{ course }}</a>
                         </td>
                     </tr>
                     {% endfor %}
