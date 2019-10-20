@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% block title %} Schdedule a New Lecture {% endblock %}
+
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">New Lecture for {{ course.name }}</li>
+{% endblock %}
+
+{% block content %}
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include 'includes/forms.html' %}
+    <button type="submit" class="btn btn-success">Schedule</button>
+  </form>
+{% endblock %}

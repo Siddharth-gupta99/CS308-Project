@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Course, Enrollment, Lecture, Attendance
 from .decorators import student_required, teacher_required
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 
 def home(request):
 
@@ -15,6 +16,10 @@ def home(request):
             # print(courses)
            # print(type(request.user.enrollments.values('course')), type(courses))
             return render(request, 'attendance/student_home.html', {'courses': courses})
+        
+        if request.user.is_teacher:
+           courses = Course.objects.all().filter(teacher = request.user)
+           return render(request, 'attendance/teachers_home.html', {'courses': courses})
 
     return render(request, 'base.html')
 

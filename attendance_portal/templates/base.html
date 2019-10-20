@@ -33,6 +33,11 @@
                 </li>
                 {% endif %}
                 
+                {% if user.is_teacher %}
+                <li class="nav-item active">
+                    <h3> <font color='gray'>Teacher &nbsp; &nbsp; &nbsp;</font></h3>
+                </li>
+                {% endif %}
             </ul>
 
             <span class="navbar-text">
