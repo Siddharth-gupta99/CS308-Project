@@ -6,7 +6,7 @@
     <div class='middle'>
         <div class='container'>
             <br> <br>
-            <h3>Schdedule a lecture for {{ course.name }}</h3>
+            <h3>Schdedule a lecture for <a href="/teachers/course/{{ course.name }}">{{ course.name }}</a> </h3>
             <br>
             <form method="post" novalidate>
                 {% csrf_token %}

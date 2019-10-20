@@ -1,7 +1,7 @@
 from .models import Lecture
 from django import forms
 import datetime
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 
 class NewLectureForm(forms.ModelForm):
@@ -14,4 +14,18 @@ class NewLectureForm(forms.ModelForm):
                 )  
     class Meta:
         model = Lecture
-        fields = ('time', 'duration', 'Class')                     
+        fields = ('time', 'duration', 'Class')       
+
+class QueryForm(forms.Form):
+    CHOICES = (
+        ('1', 'greater'),
+        ('2', 'lesser'),
+    )
+    category = forms.ChoiceField(choices=CHOICES, required=True,
+                label='Students with attendance &nbsp;')
+    attendance = forms.FloatField(initial=70, required=True,
+                label=' &nbsp; than &nbsp; ',
+                validators=[MinValueValidator(0), MaxValueValidator(100)]
+                )            
+    # visible_fields = ('category', 'attendance')               
+
