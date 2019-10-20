@@ -22,10 +22,8 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', attendance_views.home, name='home'),
-    # path('teachers/course/<str:course_name>', attendance_views.teacher_course, name='teacher_course'),
+    path('teachers/course/<str:course_name>', attendance_views.teacher_course, name='teacher_course'),
     path('teachers/course/<str:course_name>/schedule', attendance_views.course_schedule, name='course_schedule'),
-    # path('teachers/course/<str:course_name>/attendance_greater/<int:percent>', attendance_views.attendance_greater, name='attendance_greater'),
-    # path('teachers/course/<str:course_name>/attendance_lesser/<int:percent>', attendance_views.attendance_lesser, name='attendance_lesser'),    
     # path('teachers/course/<str:course_name>/lectures', attendance_views.course_lectures, name='course_lectures'),
     # path('teachers/course/<str:course_name>/lectures/<int:pk>', attendance_views.course_lecture, name='course_lecture'),
     # path('teachers/course/<str:course_name>/students', attendance_views.course_students, name='course_students'),
