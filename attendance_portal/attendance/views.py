@@ -2,7 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Course, Enrollment, Lecture, Attendance
 from .decorators import student_required, teacher_required
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
+from .forms import NewLectureForm 
+
 
 def home(request):
 
@@ -22,6 +24,33 @@ def home(request):
            return render(request, 'attendance/teachers_home.html', {'courses': courses})
 
     return render(request, 'base.html')
+
+@login_required
+@teacher_required
+def course_schedule(request, course_name):
+    course = get_object_or_404(Course, name=course_name)
+    
+    if (request.user != course.teacher):
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        post = request.POST.copy()
+        d = request.POST['time']
+        d = d.replace("T", " ")
+        d = d + ":00"
+        post['time'] = d;
+        form = NewLectureForm(post) 
+
+        if form.is_valid():
+            lecture = form.save(commit=False)
+            lecture.course = course
+            lecture.save()
+            return redirect('home')
+
+    else:
+        form = NewLectureForm()
+
+    return render(request, 'attendance/new_lecture.html', {'form': form, 'course': course})            
 
 @login_required
 @student_required
