@@ -21,7 +21,7 @@ class QueryForm(forms.Form):
         ('1', 'greater'),
         ('2', 'lesser'),
     )
-    category = forms.ChoiceField(choices=CHOICES, required=True,
+    category = forms.ChoiceField(choices=CHOICES,
                 label='Students with attendance &nbsp;')
     attendance = forms.FloatField(initial=70, required=True,
                 label=' &nbsp; than &nbsp; ',

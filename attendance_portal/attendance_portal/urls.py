@@ -22,12 +22,13 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', attendance_views.home, name='home'),
+    path('teachers/course/<str:course_name>/export_as_csv', attendance_views.export_as_csv, name='export_as_csv'),
     path('teachers/course/<str:course_name>', attendance_views.teacher_course, name='teacher_course'),
     path('teachers/course/<str:course_name>/schedule', attendance_views.course_schedule, name='course_schedule'),
-    # path('teachers/course/<str:course_name>/lectures', attendance_views.course_lectures, name='course_lectures'),
-    # path('teachers/course/<str:course_name>/lectures/<int:pk>', attendance_views.course_lecture, name='course_lecture'),
-    # path('teachers/course/<str:course_name>/students', attendance_views.course_students, name='course_students'),
-    # path('teachers/course/<str:course_name>/students/<int:pk>', attendance_views.course_student, name='course_student'),    
+    path('teachers/course/<str:course_name>/lectures', attendance_views.course_lectures, name='course_lectures'),
+    path('teachers/course/<str:course_name>/lectures/<int:pk>', attendance_views.course_lecture, name='course_lecture'),
+    path('teachers/course/<str:course_name>/students', attendance_views.course_students, name='course_students'),
+    path('teachers/course/<str:course_name>/students/<int:pk>', attendance_views.course_student, name='course_student'),    
     path('students/my_courses', attendance_views.my_courses, name='student_courses'),
     path('students/course/<str:course_name>', attendance_views.student_course, name='student_course'),
     path('admin/', admin.site.urls),
