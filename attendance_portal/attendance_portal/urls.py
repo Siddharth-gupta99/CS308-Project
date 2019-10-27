@@ -22,6 +22,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', attendance_views.home, name='home'),
+    path('teachers/course/<str:course_name>/export_as_csv', attendance_views.export_as_csv, name='export_as_csv'),
     path('teachers/course/<str:course_name>', attendance_views.teacher_course, name='teacher_course'),
     path('teachers/course/<str:course_name>/schedule', attendance_views.course_schedule, name='course_schedule'),
     path('teachers/course/<str:course_name>/lectures', attendance_views.course_lectures, name='course_lectures'),
