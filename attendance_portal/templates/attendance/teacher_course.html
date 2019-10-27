@@ -18,10 +18,24 @@
             </div>
             <br>
             
+            <br>
             <form class="form-inline" method="POST" novalidate>
                 {% csrf_token %}
                 {{ form|crispy }}
                 &nbsp;<button type="submit" class="btn btn-primary">Find</button>
-            </form>   
+            </form>  
+            <br>
+            <div class='row'>
+                <div class="col-3">
+                        <a class="btn btn-light" href="/teachers/course/{{ course.name }}/students">  Student-wise Attendance </a>                    
+                </div>
+            </div>
+            <br>
+            <div class='row'>
+                <div class="col-3">
+                        <a class="btn btn-light" href="/teachers/course/{{ course.name }}/lectures">  Lecture-wise Attendance </a>                    
+                </div>
+            </div>
+
         </div>    
 {% endblock %}

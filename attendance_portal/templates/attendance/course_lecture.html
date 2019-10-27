@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ course.name }}'s Lecture {% endblock %}
+
+{% block content %}
+
+        <div class='container'>
+            <br>
+
+            <div class='row'>
+                <h3> <a href="/teachers/course/{{ course.name }}/lectures/{{ lecture.pk }}">Lecture's</a> attendance record in <a href="/teachers/course/{{ course.name }}">{{ course.name }}</a>.</h3>  
+            </div>
+            <br>
+            <div class="row">
+                <h4>Attendance = {{ attendance }} %</h4>
+            </div>
+            <br>
+            <table class="table">
+                <thead class="thead-inverse">
+                    <tr>
+                    <th>Student</th>
+                    <th>Present</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>
+                            <a href="/teachers/course/{{ course.name }}/students/{{ student.pk }}">{{ student.name }}</a>
+                        </td>
+                        <td>
+                            {% if student.attended %}
+                                <font color='green'>Yes</font>
+                            {% else %}
+                                <font color='red'>No</font>
+                            {% endif %}        
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table> 
+        </div>    
+{% endblock %}

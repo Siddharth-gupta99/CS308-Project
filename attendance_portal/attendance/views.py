@@ -94,6 +94,156 @@ def attendance_query(request, form, course):
 
 @login_required
 @teacher_required
+def course_lectures(request, course_name):
+    course = get_object_or_404(Course, name=course_name)
+    
+    if (request.user != course.teacher):
+        raise PermissionDenied
+    
+    students = course.enrollments.values('student')
+    lectures = course.lectures.all().order_by('time')
+    total = len(students)
+    attendances = []
+    cnt = 0
+
+    for lecture in lectures:
+        cnt += 1
+        total_attended = 0
+
+        for student_ in students:
+            student = get_object_or_404(User, pk=student_['student'])
+            attended = Attendance.objects.filter(lecture=lecture).filter(student=student).exists()
+
+            if attended:
+                total_attended += 1
+
+        if (total > 0):
+            total_attended /= total
+            total_attended *= 100
+        else:    
+            total_attended = 100    
+        
+        attendances.append({
+            'time': lecture.time,
+            'lecture': lecture.pk,
+            'percent': total_attended,
+            'cnt': cnt
+        })          
+
+    return render(request, 'attendance/course_lectures.html', {'course': course, 'lectures': attendances})            
+
+@login_required
+@teacher_required
+def course_lecture(request, course_name, pk):
+    course = get_object_or_404(Course, name=course_name)
+    
+    if (request.user != course.teacher):
+        raise PermissionDenied
+    
+    students = course.enrollments.values('student')
+    lecture = get_object_or_404(Lecture, pk=pk)
+    total = len(students)
+    attendances = []
+    total_attended = 0
+
+    for student_ in students:
+        student = get_object_or_404(User, pk=student_['student'])
+        attended = Attendance.objects.filter(lecture=lecture).filter(student=student).exists()
+
+        if attended:
+            total_attended += 1
+
+        attendances.append({
+        'name': student.first_name,
+        'pk': student.pk,
+        'attended': attended
+        })     
+
+    if (total > 0):
+        total_attended /= total
+        total_attended *= 100
+    else:    
+        total_attended = 100             
+
+    return render(request, 'attendance/course_lecture.html', {'attendance': total_attended, 'course': course, 'lecture': lecture, 'students': attendances})            
+
+
+@login_required
+@teacher_required
+def course_students(request, course_name):
+    course = get_object_or_404(Course, name=course_name)
+    
+    if (request.user != course.teacher):
+        raise PermissionDenied
+    
+    students = course.enrollments.values('student')
+    lectures = course.lectures.all()
+    total = len(lectures)
+    attendances = []
+
+    for student_ in students:
+        student = get_object_or_404(User, pk=student_['student'])
+        total_attended = 0
+
+        for lecture in lectures:
+            attended = Attendance.objects.filter(lecture=lecture).filter(student=student).exists()
+
+            if attended:
+                total_attended += 1
+
+        if (total > 0):
+            total_attended /= total
+            total_attended *= 100
+        else:    
+            total_attended = 100    
+        
+        attendances.append({
+            'student': student.first_name,
+            'percent': total_attended,
+            'student_pk': student.pk
+        })          
+
+    return render(request, 'attendance/course_students.html', {'course': course, 'attendances': attendances})            
+
+@login_required
+@teacher_required
+def course_student(request, course_name, pk):
+    course = get_object_or_404(Course, name=course_name)
+    
+    if (request.user != course.teacher):
+        raise PermissionDenied
+
+    lectures = course.lectures.all().order_by('time')
+    total = len(lectures)
+    attendances = []
+    student = get_object_or_404(User, pk=pk)
+    total_attended = 0
+    cnt = 0
+
+    for lecture in lectures:
+        cnt += 1
+        attended = Attendance.objects.filter(lecture=lecture).filter(student=student).exists()
+
+        if attended:
+            total_attended += 1
+
+        attendances.append({
+        'time': lecture.time,
+        'present': attended,
+        'lecture': lecture.pk,
+        'cnt': cnt
+        })     
+
+    if (total > 0):
+        total_attended /= total
+        total_attended *= 100
+    else:    
+        total_attended = 100             
+
+    return render(request, 'attendance/course_student.html', {'attendance': total_attended, 'course': course, 'lectures': attendances, 'student': student})            
+
+@login_required
+@teacher_required
 def teacher_course(request, course_name):
     course = get_object_or_404(Course, name=course_name)
     
