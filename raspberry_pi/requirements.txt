@@ -1,0 +1,11 @@
+numpy==1.17.3
+opencv-contrib-python==4.1.1.26
+requests==2.22.0
+requests-oauthlib==1.2.0
+idna==2.8
+certifi==2019.9.11
+chardet==3.0.4
+urllib3==1.25.6
+azure-cognitiveservices-vision-face==0.4.0
+azure-common==1.1.23
+msrest==0.6.10
