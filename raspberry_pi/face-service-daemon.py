@@ -11,13 +11,12 @@ from azure.cognitiveservices.vision.face.models import TrainingStatusType, Perso
 
 
 logging.basicConfig(\
-	format="%(asctime)s [%(levelname)-8s] %(message)s", \
+	format="\033[1m%(asctime)s [%(levelname)-8s]\033[0m %(message)s", \
 	level=logging.INFO, \
 	datefmt='%Y-%m-%d %H:%M:%S')
 
-
-TRY_MAX_COUNT = 5
 TAKE_ATTENDANCE = False
+TRY_MAX_COUNT = 5
 
 leftMarginSeconds = CLASSTIME_LEFT_MARGIN['hour']*3600 + CLASSTIME_LEFT_MARGIN['minute']*60 + CLASSTIME_LEFT_MARGIN['second']
 rightMarginSeconds = CLASSTIME_RIGHT_MARGIN['hour']*3600 + CLASSTIME_RIGHT_MARGIN['minute']*60 + CLASSTIME_RIGHT_MARGIN['second']
@@ -57,6 +56,7 @@ def fetchAndCheck():
 
 	logging.info('Next class scheduled for {} in classroom ID {}'.format(str(nextScheduleTime), CLASSROOM_ID))
 	logging.info('Checking for current time between {} and {} seconds from scheduled time'.format(-leftMarginSeconds, rightMarginSeconds))
+	
 	return currentTime >= leftTimeDelta and currentTime <= rightTimeDelta
 
 ''' 
@@ -66,47 +66,72 @@ to be done here						|
 '''
 def captureImages(imageQueue):
 
-	cap = cv2.VideoCapture(0)
+	global TAKE_ATTENDANCE
+	logging.info("<Thread 1> Starting the camera")
+	try:
+		cap = cv2.VideoCapture(0)
+	except cv2.error as e:
+		logging.error("<Thread 1> Caught error: {}".format(e))
+		TAKE_ATTENDANCE = False
+		return
+
 	frameRate = cap.get(cv2.CAP_PROP_FPS)
 	i = 0
-
+	imageCount = 1
+	
 	while(TAKE_ATTENDANCE and cap.isOpened()):
-	    ret, frame = cap.read()
-	    if (ret != True):
-	        break
-	    if (i % math.floor(frameRate*IMAGE_CAPTURE_RATE) == 0):
-	        ret,buf = cv.imencode('.jpg', cap)
-	        imageQueue.put(buf.tobytes(), block=True)
-	    i+=1
+		ret, frame = cap.read()
+		if (ret != True):
+			break
+		if (i % math.floor(frameRate*IMAGE_CAPTURE_RATE) == 0):
+			logging.info("<Thread 1> Captured image {}".format(str(imageCount)))
+			ret,buf = cv2.imencode('.jpg', frame)
+			imageQueue.put(io.BytesIO(buf), block=True)
+			imageCount += 1
+		i+=1
 
 	cap.release()
 
-def identifyFaces(imageQueue):
+def identifyFaces(imageQueue, face_client):
 
-	while(not imageQueue.empty()):
+	global TAKE_ATTENDANCE
+
+	imageCount = 1
+	
+	while(TAKE_ATTENDANCE):
 		img = imageQueue.get(block=True)
 
+		logging.info("<Thread 2> Received image {}".format(str(imageCount)))
+
 		face_ids = []
-		faces = face_client.face.detect_with_stream(image)
+		try:
+			faces = face_client.face.detect_with_stream(img)
+		except:
+			logging.warning("Error")
+
 		for face in faces:
 			face_ids.append(face.face_id)
 
-		results = face_client.face.identify(face_ids, PERSON_GROUP_ID)
+		if not faces:
+			logging.warning('<Thread 2> No faces detected')
+		else:
+			results = face_client.face.identify(face_ids, PERSON_GROUP_ID)
 		
-		logging.info('Identifying faces')
-		
-		if not results:
-			logging.info('No person identified in the person group for faces from the {}.'.format(os.path.basename(image.name)))
-		for person in results:
-			if person.candidates != []:
-				logging.info('Person for face ID {} is identified in {} with a confidence of {}.'.format(person.face_id, os.path.basename(image.name), person.candidates[0].confidence)) # Get topmost confidence score
-				objperson = face_client.person_group_person.get(PERSON_GROUP_ID, person.candidates[0].person_id)
-				logging.info(objperson.name)
-				requests.post(url=API_POST_ATTENDANCE, data={'classroom_id':CLASSROOM_ID, 'student':objperson.name})
+			logging.info('<Thread 2> Identifying faces')
+			
+			if not results:
+				logging.warning('<Thread 2> No person identified')
+			for person in results:
+				if person.candidates != [] and person.candidates[0].confidence > THRESHOLD:
+					objperson = face_client.person_group_person.get(PERSON_GROUP_ID, person.candidates[0].person_id)
+					logging.info('<Thread 2> Person is \033[1;32m{} \033[21;0mwith a confidence of \033[1;32m{}.\033[21;0m'.format(objperson.name, person.candidates[0].confidence)) # Get topmost confidence score
+					requests.post(url=API_POST_ATTENDANCE, data={'classroom_id':CLASSROOM_ID, 'student':objperson.name})
+		imageCount += 1
 
 
 def takeAttendance():
 
+	global TAKE_ATTENDANCE
 	# try:
 	# 	logging.info("Configuring and authenticating Face API to create FaceClient object")
 	# 	face_client = FaceClient(ENDPOINT, CognitiveServicesCredentials(KEY))
@@ -122,9 +147,10 @@ def takeAttendance():
 	training_status = face_client.person_group.get_training_status(PERSON_GROUP_ID)
 	logging.info("Training status of the model: {}.".format(training_status.status))
 
+	TAKE_ATTENDANCE = True
 	imageQueue = Queue()
-	capImg = Process(target=captureImages, args=(imageQueue))
-	idnFce = Process(target=identifyFaces, args=(imageQueue))
+	capImg = Process(target=captureImages, args=([imageQueue]))
+	idnFce = Process(target=identifyFaces, args=([imageQueue, face_client]))
 	capImg.start()
 	idnFce.start()
 	capImg.join()

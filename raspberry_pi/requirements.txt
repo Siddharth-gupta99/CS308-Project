@@ -9,3 +9,4 @@ urllib3==1.25.6
 azure-cognitiveservices-vision-face==0.4.0
 azure-common==1.1.23
 msrest==0.6.10
+
