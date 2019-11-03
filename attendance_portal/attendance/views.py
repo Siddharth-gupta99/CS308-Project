@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 def home(request):
 
+    # print("hello")
     if request.user.is_authenticated:
         if request.user.is_student:
             courses = Course.objects.all().values()

@@ -20,7 +20,7 @@ import attendance.views as attendance_views
 from accounts.forms import LoginForm
 from django.contrib.auth import views as auth_views
 from rest_framework import routers, serializers, viewsets 
-import api.views as api_views
+# import api.views as api_views
 urlpatterns = [
     path('', attendance_views.home, name='home'),
     path('students/my_courses', attendance_views.my_courses, name='student_courses'),
@@ -31,5 +31,6 @@ urlpatterns = [
     path('signup/teacher/', accounts_views.TeacherSignUpView.as_view(), name='signup_teacher'),
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html', authentication_form=LoginForm), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('api/', include('api.urls'))
     # path('api-auth/<int:lec_num>', api_views.api_func)
 ]

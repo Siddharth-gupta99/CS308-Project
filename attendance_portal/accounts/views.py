@@ -7,6 +7,7 @@ from .forms import TeacherSignUpForm, StudentSignUpForm
 from django.contrib.auth.decorators import login_required
 
 def signup(request):
+    # print("hello1")
     return render(request, 'accounts/signup.html')
 
 class StudentSignUpView(CreateView):
