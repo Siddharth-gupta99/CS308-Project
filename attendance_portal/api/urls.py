@@ -8,4 +8,5 @@ from django.urls import path, include
 urlpatterns = [
 	# path('', include(router.urls))
 	path('lecture/<int:classroom_id>/', views.ApiView),
+	path('lecture/s', views.ApiView2)
 	]
