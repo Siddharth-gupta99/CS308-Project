@@ -329,7 +329,7 @@ def student_course(request, course_name):
             return redirect('student_course', course_name)
 
     else:
-        alllectures = Lecture.objects.filter(course=course).filter(time__lte=timezone.localtime()).order_by('time')  
+        alllectures = Lecture.objects.filter(course=course).order_by('time')  
         lecno = 0  
         user = request.user
         num_attendend = 0

@@ -107,7 +107,7 @@ def ApiView2(request):
 		# return HttpResponse("Yo")
 	if request.method == 'POST':
 		attendanceData = request.data
-		student = get_object_or_404(User, username=attendanceData["roll_number"].lower())
+		student = get_object_or_404(User, username=attendanceData["roll_number"])
 		lecture = get_object_or_404(Lecture, pk=attendanceData["lecture_id"])
 		# course = lecture.
 		print("pk =",lecture.pk, "LectureC", lecture.course)
@@ -115,6 +115,7 @@ def ApiView2(request):
 		print(test)
 		kull = Enrollment.objects.filter(course=lecture.course, student=student.pk)
 		print(kull)
+		
 		if kull:
 			Attendance.objects.create(
 				student=student,
