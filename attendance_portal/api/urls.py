@@ -7,5 +7,5 @@ from django.urls import path, include
 
 urlpatterns = [
 	# path('', include(router.urls))
-	path('lecture/', views.ApiView),
+	path('lecture/<int:classroom_id>/', views.ApiView),
 	]

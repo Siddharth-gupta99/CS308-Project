@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 # from rest_framework import viewsets
 from rest_framework.views import APIView
 from .serializers import ApiSerializer
-from attendance.models import Lecture
+from attendance.models import Lecture, Course
 # from .models import Language
 # Create your views here.
 
@@ -62,9 +62,9 @@ import datetime
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
-def ApiView(request):
+def ApiView(request, classroom_id):
     if request.method == 'GET':
-        # print("joe")
+        print("joe")
         now = datetime.datetime.now()
         # print(now) 
         # current_time = now.strftime("%H:%M:%S")
@@ -76,7 +76,9 @@ def ApiView(request):
         # posts = Language.objects.filter(time__gte=datetime.datetime.time(now),
                                 # time__lte=datetime.datetime.time(t1))
         # posts = Language.objects.filter(name={'C', 'C++'})
+
         lec = Lecture.objects.filter(time__gte=now, time__lte=t1)
+        
         # posts = Language.objects.all()
         # print(posts)
         lec = lec.order_by('time')
@@ -85,3 +87,5 @@ def ApiView(request):
         # print(obj)
         serializer = ApiSerializer(lec, many=True)
         return Response(serializer.data)
+        # return HttpResponse("Yo")
+        # pass
