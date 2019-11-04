@@ -11,6 +11,7 @@ from django.utils import timezone
 
 def home(request):
 
+    # print("hello")
     if request.user.is_authenticated:
         if request.user.is_student:
             courses = Course.objects.all().values()

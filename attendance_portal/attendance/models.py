@@ -33,6 +33,6 @@ class Lecture(models.Model):
 class Attendance(models.Model):
     student = models.ForeignKey(User, related_name='attendances', on_delete=models.CASCADE, null=False)
     lecture = models.ForeignKey(Lecture, related_name='attendances', on_delete=models.CASCADE, null=False)
-    
+
     class Meta:
-        unique_together = (("student", "lecture"),)
+        unique_together = (("student", "lecture"),) 
