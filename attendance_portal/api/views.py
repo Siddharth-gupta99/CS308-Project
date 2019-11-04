@@ -78,10 +78,10 @@ def ApiView(request, classroom_id):
         # posts = Language.objects.filter(name={'C', 'C++'})
 
         lec = Lecture.objects.filter(time__gte=now, time__lte=t1)
-        
+        lec = lec.filter(Class=classroom_id) 
         # posts = Language.objects.all()
         # print(posts)
-        lec = lec.order_by('time')
+        lec = lec.order_by('time')[0]
         # print(posts)
         # print(now)
         # print(obj)
