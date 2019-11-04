@@ -23,7 +23,7 @@ rightMarginSeconds = CLASSTIME_RIGHT_MARGIN['hour']*3600 + CLASSTIME_RIGHT_MARGI
 
 def fetchAndCheck():
 
-	GETparameters = None
+	GETparameters = {'classroom_id':CLASSROOM_ID}
 	
 	for tryCount in range(TRY_MAX_COUNT):
 		try:
@@ -49,7 +49,7 @@ def fetchAndCheck():
 				logging.critical('Cannot parse into JSON. Invalid response from \'{}\''.format(API_GET_SCHEDULE))
 				return
 
-	nextScheduleTime = datetime.datetime.strptime(nextScheduleTime['date'], '%Y-%m-%d %H:%M:%S.%f')
+	nextScheduleTime = datetime.datetime.strptime(nextScheduleTime['date'], FETCH_TIME_FORMAT)
 	currentTime = datetime.datetime.now()
 	leftTimeDelta = nextScheduleTime - datetime.timedelta(seconds=leftMarginSeconds)
 	rightTimeDelta = nextScheduleTime + datetime.timedelta(seconds=rightMarginSeconds)
@@ -68,13 +68,13 @@ def captureImages(imageQueue):
 
 	global TAKE_ATTENDANCE
 	logging.info("<Thread 1> Starting the camera")
-	try:
-		cap = cv2.VideoCapture(0)
-	except cv2.error as e:
-		logging.error("<Thread 1> Caught error: {}".format(e))
-		TAKE_ATTENDANCE = False
-		return
-
+	# try:
+	cap = cv2.VideoCapture('/dev/video0')
+	# except cv2.error as e:
+	# 	logging.error("<Thread 1> Caught error: {}".format(e))
+	# 	TAKE_ATTENDANCE = False
+	# 	return
+	cap.set(cv2.CAP_PROP_AUTOFOCUS, 1)
 	frameRate = cap.get(cv2.CAP_PROP_FPS)
 	i = 0
 	imageCount = 1
