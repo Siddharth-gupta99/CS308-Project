@@ -14,12 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 import accounts.views as accounts_views
 import attendance.views as attendance_views
 from accounts.forms import LoginForm
 from django.contrib.auth import views as auth_views
-
+from rest_framework import routers, serializers, viewsets 
+# import api.views as api_views
 urlpatterns = [
     path('', attendance_views.home, name='home'),
     path('teachers/course/<str:course_name>/export_as_csv', attendance_views.export_as_csv, name='export_as_csv'),
@@ -37,4 +38,6 @@ urlpatterns = [
     path('signup/teacher/', accounts_views.TeacherSignUpView.as_view(), name='signup_teacher'),
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html', authentication_form=LoginForm), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('api/', include('api.urls'))
+    # path('api-auth/<int:lec_num>', api_views.api_func)
 ]
