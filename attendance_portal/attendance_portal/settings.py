@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'attendance',
     'rest_framework',
     'api',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -118,9 +119,11 @@ REST_FRAMEWORK = {
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

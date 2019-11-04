@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %} Schdedule a New Lecture {% endblock %}
+
+{% block content %}
+    <div class='middle'>
+        <div class='container'>
+            <br> <br>
+            <h3>Schdedule a lecture for <a href="/teachers/course/{{ course.name }}">{{ course.name }}</a> </h3>
+            <br>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% include 'includes/forms.html' with form=form %}
+                <button type="submit" class="btn btn-primary">Schedule</button>
+            </form>
+        </div>
+    </div> 
+{% endblock %}
