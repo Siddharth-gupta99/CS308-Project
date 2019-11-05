@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Web Portal &mdash; Attendance Web Portal 1.0 documentation</title>
+  <title>Installation Instructions &mdash; Attendance Web Portal 1.0 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation Instructions" href="installation.html" />
-    <link rel="prev" title="Welcome to Attendance Web Portal’s Developer documentation!" href="index.html" /> 
+    <link rel="next" title="Attendance Views" href="modules/attendance-views.html" />
+    <link rel="prev" title="Web Portal" href="webportal.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,12 +82,8 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Web Portal</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#code-distribution">Code Distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webportal.html">Web Portal</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation Instructions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/attendance-views.html">Attendance Views</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/Models.html">Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/developer-info.html">Developer Info</a></li>
@@ -136,13 +132,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Web Portal</li>
+      <li>Installation Instructions</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/webportal.md.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/installation.md.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -155,21 +151,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="web-portal">
-<h1>Web Portal<a class="headerlink" href="#web-portal" title="Permalink to this headline">¶</a></h1>
-<p>The code is present in attendance_portal directory. You should be well versed with django to contribute to this code.</p>
-<div class="section" id="code-distribution">
-<h2>Code Distribution<a class="headerlink" href="#code-distribution" title="Permalink to this headline">¶</a></h2>
-<ol class="simple">
-<li><p>attendance_portal/accounts - this directory stores the code for all types of authentication (teacher, student, login, signup, logout).</p></li>
-<li><p>attendance_portal/attendance - this stores all the code for different functionalities for students and teachers.
-Rest files are pretty standard for any django project.</p></li>
+  <div class="section" id="installation-instructions">
+<h1>Installation Instructions<a class="headerlink" href="#installation-instructions" title="Permalink to this headline">¶</a></h1>
+<p>Setup on Linux, Bash, Python 3.6+ and pip 19.3+</p>
+<ol>
+<li><blockquote>
+<div><p>git clone https://github.com/Siddharth-gupta99/CS308-Project.git</p>
+</div></blockquote>
+</li>
+<li><blockquote>
+<div><p>virtualenv venv -p python3</p>
+</div></blockquote>
+</li>
+<li><blockquote>
+<div><p>source venv/bin/activate</p>
+</div></blockquote>
+</li>
+<li><blockquote>
+<div><p>cd CS308-Project/attendance_portal/</p>
+</div></blockquote>
+</li>
+<li><blockquote>
+<div><p>pip install -r requirements.txt</p>
+</div></blockquote>
+</li>
+<li><blockquote>
+<div><p>python manage.py migrate</p>
+</div></blockquote>
+</li>
+<li><blockquote>
+<div><p>python manage.py runserver</p>
+</div></blockquote>
+</li>
 </ol>
-</div>
-<div class="section" id="contributing">
-<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
-<p>Go to <a class="reference internal" href="installation.html"><span class="doc">installation instructions</span></a> and follow the instructions to get the code working. If you add any new package update requirements.txt. Make a pull request with your changes. Also you can report any issue if any and propose new features. All the functions are properly commented so its not very difficult to find what any piece of code is doing.</p>
-</div>
 </div>
 
 
@@ -180,10 +194,10 @@ Rest files are pretty standard for any django project.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="installation.html" class="btn btn-neutral float-right" title="Installation Instructions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="modules/attendance-views.html" class="btn btn-neutral float-right" title="Attendance Views" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Attendance Web Portal’s Developer documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="webportal.html" class="btn btn-neutral float-left" title="Web Portal" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

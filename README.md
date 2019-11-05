@@ -30,16 +30,6 @@ Refer to:
   * Copy the scripts in the Raspberry Pi directory to the Pi and run them.
 
 2. **Web Portal**
-After cloning the repo, install all the requirements from the requirements.txt. After that to start the django server write:
-
-   `python manage.py runserver`
-
- Go to provided link after running above command.
- Then, you will land up on a portal.
-
-
-## Installation
-
 Instructions can be found on [https://github.com/Siddharth-gupta99/CS308-Project/blob/master/installation.md](https://github.com/Siddharth-gupta99/CS308-Project/blob/master/installation.md).
 
 ## Usage

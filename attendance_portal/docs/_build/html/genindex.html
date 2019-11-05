@@ -82,6 +82,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="webportal.html">Web Portal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation Instructions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/attendance-views.html">Attendance Views</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/Models.html">Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/developer-info.html">Developer Info</a></li>
@@ -153,9 +154,15 @@
 <div class="genindex-jumpbox">
  <a href="#A"><strong>A</strong></a>
  | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  
@@ -163,11 +170,21 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/attendance-views.html#module-attendance.views">attendance.views (module)</a>
+      <li><a href="modules/Models.html#attendance.models.Attendance">Attendance (class in attendance.models)</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Attendance.DoesNotExist">Attendance.DoesNotExist</a>
+</li>
+      <li><a href="modules/Models.html#module-attendance.models">attendance.models (module)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Attendance.MultipleObjectsReturned">Attendance.MultipleObjectsReturned</a>
+</li>
+      <li><a href="modules/attendance-views.html#module-attendance.views">attendance.views (module)</a>
+</li>
       <li><a href="modules/attendance-views.html#attendance.views.attendance_query">attendance_query() (in module attendance.views)</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Lecture.attendances">attendances (attendance.models.Lecture attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -175,12 +192,32 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Lecture.Class">Class (attendance.models.Lecture attribute)</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Enrollment.course">course (attendance.models.Enrollment attribute)</a>
+
+      <ul>
+        <li><a href="modules/Models.html#attendance.models.Lecture.course">(attendance.models.Lecture attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="modules/Models.html#attendance.models.Course">Course (class in attendance.models)</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Course.DoesNotExist">Course.DoesNotExist</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Course.MultipleObjectsReturned">Course.MultipleObjectsReturned</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Enrollment.course_id">course_id (attendance.models.Enrollment attribute)</a>
+
+      <ul>
+        <li><a href="modules/Models.html#attendance.models.Lecture.course_id">(attendance.models.Lecture attribute)</a>
+</li>
+      </ul></li>
       <li><a href="modules/attendance-views.html#attendance.views.course_lecture">course_lecture() (in module attendance.views)</a>
 </li>
       <li><a href="modules/attendance-views.html#attendance.views.course_lectures">course_lectures() (in module attendance.views)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/attendance-views.html#attendance.views.course_schedule">course_schedule() (in module attendance.views)</a>
 </li>
       <li><a href="modules/attendance-views.html#attendance.views.course_student">course_student() (in module attendance.views)</a>
@@ -190,10 +227,42 @@
   </ul></td>
 </tr></table>
 
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Lecture.duration">duration (attendance.models.Lecture attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Enrollment">Enrollment (class in attendance.models)</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Enrollment.DoesNotExist">Enrollment.DoesNotExist</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Enrollment.MultipleObjectsReturned">Enrollment.MultipleObjectsReturned</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Course.enrollments">enrollments (attendance.models.Course attribute)</a>
+</li>
       <li><a href="modules/attendance-views.html#attendance.views.export_as_csv">export_as_csv() (in module attendance.views)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Lecture.get_Class_display">get_Class_display() (attendance.models.Lecture method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Lecture.get_next_by_time">get_next_by_time() (attendance.models.Lecture method)</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Lecture.get_previous_by_time">get_previous_by_time() (attendance.models.Lecture method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -206,30 +275,106 @@
   </ul></td>
 </tr></table>
 
-<h2 id="M">M</h2>
+<h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/Models.html#attendance.models">models (in module attendance)</a>
+      <li><a href="modules/Models.html#attendance.models.Attendance.id">id (attendance.models.Attendance attribute)</a>
+
+      <ul>
+        <li><a href="modules/Models.html#attendance.models.Enrollment.id">(attendance.models.Enrollment attribute)</a>
+</li>
+        <li><a href="modules/Models.html#attendance.models.Lecture.id">(attendance.models.Lecture attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Attendance.lecture">lecture (attendance.models.Attendance attribute)</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Lecture">Lecture (class in attendance.models)</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Lecture.DoesNotExist">Lecture.DoesNotExist</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Lecture.MultipleObjectsReturned">Lecture.MultipleObjectsReturned</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Attendance.lecture_id">lecture_id (attendance.models.Attendance attribute)</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Course.lectures">lectures (attendance.models.Course attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/attendance-views.html#attendance.views.my_courses">my_courses() (in module attendance.views)</a>
 </li>
   </ul></td>
 </tr></table>
 
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Course.name">name (attendance.models.Course attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Attendance.objects">objects (attendance.models.Attendance attribute)</a>
+
+      <ul>
+        <li><a href="modules/Models.html#attendance.models.Course.objects">(attendance.models.Course attribute)</a>
+</li>
+        <li><a href="modules/Models.html#attendance.models.Enrollment.objects">(attendance.models.Enrollment attribute)</a>
+</li>
+        <li><a href="modules/Models.html#attendance.models.Lecture.objects">(attendance.models.Lecture attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Attendance.student">student (attendance.models.Attendance attribute)</a>
+
+      <ul>
+        <li><a href="modules/Models.html#attendance.models.Enrollment.student">(attendance.models.Enrollment attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/attendance-views.html#attendance.views.student_course">student_course() (in module attendance.views)</a>
 </li>
+      <li><a href="modules/Models.html#attendance.models.Attendance.student_id">student_id (attendance.models.Attendance attribute)</a>
+
+      <ul>
+        <li><a href="modules/Models.html#attendance.models.Enrollment.student_id">(attendance.models.Enrollment attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Course.teacher">teacher (attendance.models.Course attribute)</a>
+</li>
       <li><a href="modules/attendance-views.html#attendance.views.teacher_course">teacher_course() (in module attendance.views)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/Models.html#attendance.models.Course.teacher_id">teacher_id (attendance.models.Course attribute)</a>
+</li>
+      <li><a href="modules/Models.html#attendance.models.Lecture.time">time (attendance.models.Lecture attribute)</a>
 </li>
   </ul></td>
 </tr></table>

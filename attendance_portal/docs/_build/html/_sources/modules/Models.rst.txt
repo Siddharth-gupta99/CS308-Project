@@ -2,7 +2,7 @@
 Models
 ########
 
-.. autoclass:: attendance.models
+.. automodule:: attendance.models
     :members:
     :undoc-members:
     :show-inheritance:
