@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %} Attendance Query {% endblock %}
+
+{% block content %}
+
+        <div class='container'>
+            <br>
+
+            <div class='row'>
+                {% if form.cleaned_data.category == '1' %}
+                    <h3>Students with attendance greater than {{ form.cleaned_data.attendance }} % in <a href="/teachers/course/{{ course.name }}">{{ course.name }}</a>.</h3>
+                {% else %}
+                    <h3>Students with attendance lesser than {{ form.cleaned_data.attendance }} % in <a href="/teachers/course/{{ course.name }}">{{ course.name }}</a>.</h3>
+                {% endif %}    
+            </div>
+            <br>
+
+            <table class="table">
+                <thead class="thead-inverse">
+                    <tr>
+                    <th>Student</th>
+                    <th>Attendance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attendance in attendances %}
+                    <tr>
+                        <td>
+                            <a href="/teachers/course/{{ course.name }}/students/{{ attendance.student_pk }}">{{ attendance.student }}</a>
+                        </td>
+                        <td>
+                            {{ attendance.percent }} %
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table> 
+        </div>    
+{% endblock %}

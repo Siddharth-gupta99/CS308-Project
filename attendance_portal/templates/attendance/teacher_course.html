@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %} {{ course.name }} {% endblock %}
+
+{% block content %}
+
+        <div class='container'>
+            <br>
+            <div class='row'>
+                <div class="col-3">
+                    <h3>{{ course.name }}</h3>
+                </div>
+                <div class="col-3">
+                    <a class="btn btn-secondary" href="/teachers/course/{{ course.name }}/schedule">  Schedule a Lecture </a>
+                </div>
+            </div>    
+            <br>
+            
+            <br>
+            <form class="form-inline" method="POST" novalidate>
+                {% csrf_token %}
+                {{ form|crispy }}
+                &nbsp;<button type="submit" class="btn btn-primary">Find</button>
+            </form>  
+            <br>
+            <div class="row">
+                <div class="col-3">
+                    <a class="btn btn-success" href="/teachers/course/{{ course.name }}/export_as_csv">  Export attendance(.csv) </a>
+                </div>
+            </div>
+            <br>
+            <div class='row'>
+                <div class="col-3">
+                    <a class="btn btn-light" href="/teachers/course/{{ course.name }}/students">  Student-wise Attendance </a>                    
+                </div>
+            </div>
+            <br>
+            <div class='row'>
+                <div class="col-3">
+                    <a class="btn btn-light" href="/teachers/course/{{ course.name }}/lectures">  Lecture-wise Attendance </a>                    
+                </div>
+            </div>
+        </div>    
+{% endblock %}

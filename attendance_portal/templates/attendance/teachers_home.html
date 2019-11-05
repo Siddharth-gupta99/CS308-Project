@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %} Teacher Home {% endblock %}
+
+{% block content %}
+
+        <div class='container'>
+            <br>
+
+            <div class='row'>
+                 <h3>Hello,  {{ request.user.first_name }}</h3>
+            </div>
+            <br>
+            
+
+            <table class="table">
+                <thead class="thead-inverse">
+                    <tr>
+                    <th>Course</th>
+                    <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>
+                            <a href="/teachers/course/{{ course.name }}">{{ course.name }}</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-secondary" href="/teachers/course/{{ course.name }}/schedule">  Schedule a Lecture </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table> 
+        </div>    
+{% endblock %}

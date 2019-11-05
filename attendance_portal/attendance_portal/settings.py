@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'accounts',
     'widget_tweaks',
     'attendance',
+    'rest_framework',
+    'api',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -103,12 +106,24 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.DjangoModelPermissions',
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
