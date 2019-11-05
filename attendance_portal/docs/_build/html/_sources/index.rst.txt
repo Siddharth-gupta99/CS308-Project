@@ -13,9 +13,13 @@ Welcome to Attendance Web Portal's Developer documentation!
 
    webportal
 
-   modules/all-about-me.rst
 
    modules/attendance-views.rst
+
+   modules/Models.rst
+
+   modules/developer-info.rst
+
 
 Indices and tables
 ==================

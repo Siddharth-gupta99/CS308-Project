@@ -5,4 +5,5 @@ Attendance Views
 .. automodule:: attendance.views
    :members:
    :undoc-members:
+   :show-inheritance:
   
