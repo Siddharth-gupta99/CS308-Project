@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>attendance.views &mdash; Attendance Web Portal 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Attendance Web Portal
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../webportal.html">Web Portal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/attendance-views.html">Attendance Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/Models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/developer-info.html">Developer Info</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Attendance Web Portal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>attendance.views</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for attendance.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="k">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">get_object_or_404</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Course</span><span class="p">,</span> <span class="n">Enrollment</span><span class="p">,</span> <span class="n">Lecture</span><span class="p">,</span> <span class="n">Attendance</span>
+<span class="kn">from</span> <span class="nn">.decorators</span> <span class="k">import</span> <span class="n">student_required</span><span class="p">,</span> <span class="n">teacher_required</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="k">import</span> <span class="n">login_required</span>
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="k">import</span> <span class="n">PermissionDenied</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="k">import</span> <span class="n">NewLectureForm</span><span class="p">,</span> <span class="n">QueryForm</span>
+<span class="kn">from</span> <span class="nn">accounts.models</span> <span class="k">import</span> <span class="n">User</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="k">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django.utils</span> <span class="k">import</span> <span class="n">timezone</span>
+
+
+<div class="viewcode-block" id="home"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.home">[docs]</a><span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders a homepage for every type of user.</span>
+
+<span class="sd">        :param request:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_student</span><span class="p">:</span>
+            <span class="n">courses</span> <span class="o">=</span> <span class="n">Course</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="n">enrolled</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">enrollments</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;course&#39;</span><span class="p">)</span>
+            <span class="n">courses</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">courses</span><span class="p">]</span>
+            <span class="n">enrolled</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;course&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">enrolled</span><span class="p">]</span>
+            <span class="n">courses</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">courses</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">enrolled</span><span class="p">)</span>
+            <span class="c1"># print(courses)</span>
+           <span class="c1"># print(type(request.user.enrollments.values(&#39;course&#39;)), type(courses))</span>
+            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/student_home.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;courses&#39;</span><span class="p">:</span> <span class="n">courses</span><span class="p">})</span>
+        
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_teacher</span><span class="p">:</span>
+           <span class="n">courses</span> <span class="o">=</span> <span class="n">Course</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">teacher</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+           <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/teachers_home.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;courses&#39;</span><span class="p">:</span> <span class="n">courses</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;base.html&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="course_schedule"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.course_schedule">[docs]</a><span class="nd">@login_required</span>
+<span class="nd">@teacher_required</span>
+<span class="k">def</span> <span class="nf">course_schedule</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">course_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders the form for scheduling a lecture for a course and schedules it</span>
+<span class="sd">        </span>
+<span class="sd">        :param request:</span>
+<span class="sd">        :param course_name: The name of course</span>
+<span class="sd">        :type course_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">course</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Course</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">course_name</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">!=</span> <span class="n">course</span><span class="o">.</span><span class="n">teacher</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">PermissionDenied</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">+</span> <span class="s2">&quot;:00&quot;</span>
+        <span class="n">post</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">;</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">NewLectureForm</span><span class="p">(</span><span class="n">post</span><span class="p">)</span> 
+
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">lecture</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">lecture</span><span class="o">.</span><span class="n">course</span> <span class="o">=</span> <span class="n">course</span>
+            <span class="n">lecture</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">NewLectureForm</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/new_lecture.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s1">&#39;course&#39;</span><span class="p">:</span> <span class="n">course</span><span class="p">})</span>            </div>
+
+<div class="viewcode-block" id="attendance_query"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.attendance_query">[docs]</a><span class="k">def</span> <span class="nf">attendance_query</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">course</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders the data about students with attendance greater/lesser than a value</span>
+<span class="sd">        </span>
+<span class="sd">        :param request:</span>
+<span class="sd">        :param form: The form used for requesting information</span>
+<span class="sd">        :type form: QueryForm</span>
+<span class="sd">        :param course: relevant course</span>
+<span class="sd">        :type course: Course</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">students</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">enrollments</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;student&#39;</span><span class="p">)</span>
+    <span class="n">lectures</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">lectures</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">time__lte</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lectures</span><span class="p">)</span>
+    <span class="n">attendances</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="vm">__dict__</span>
+
+    <span class="k">for</span> <span class="n">student_</span> <span class="ow">in</span> <span class="n">students</span><span class="p">:</span>
+        <span class="n">student</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">student_</span><span class="p">[</span><span class="s1">&#39;student&#39;</span><span class="p">])</span>
+        <span class="n">total_attended</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">lecture</span> <span class="ow">in</span> <span class="n">lectures</span><span class="p">:</span>
+            <span class="n">attended</span> <span class="o">=</span> <span class="n">Attendance</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">lecture</span><span class="o">=</span><span class="n">lecture</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">student</span><span class="o">=</span><span class="n">student</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">attended</span><span class="p">:</span>
+                <span class="n">total_attended</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">total_attended</span> <span class="o">/=</span> <span class="n">total</span>
+            <span class="n">total_attended</span> <span class="o">*=</span> <span class="mi">100</span>
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="n">total_attended</span> <span class="o">=</span> <span class="mi">100</span>    
+
+        <span class="k">if</span><span class="p">((</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;cleaned_data&#39;</span><span class="p">][</span><span class="s1">&#39;category&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">total_attended</span> <span class="o">&gt;=</span> <span class="n">form</span><span class="p">[</span><span class="s1">&#39;cleaned_data&#39;</span><span class="p">][</span><span class="s1">&#39;attendance&#39;</span><span class="p">])):</span>
+            <span class="n">attendances</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;student&#39;</span><span class="p">:</span> <span class="n">student</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span>
+                <span class="s1">&#39;percent&#39;</span><span class="p">:</span> <span class="n">total_attended</span><span class="p">,</span>
+                <span class="s1">&#39;student_pk&#39;</span><span class="p">:</span> <span class="n">student</span><span class="o">.</span><span class="n">pk</span>
+            <span class="p">})</span> 
+
+        <span class="k">if</span><span class="p">((</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;cleaned_data&#39;</span><span class="p">][</span><span class="s1">&#39;category&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;2&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">total_attended</span> <span class="o">&lt;=</span> <span class="n">form</span><span class="p">[</span><span class="s1">&#39;cleaned_data&#39;</span><span class="p">][</span><span class="s1">&#39;attendance&#39;</span><span class="p">])):</span>
+            <span class="n">attendances</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;student&#39;</span><span class="p">:</span> <span class="n">student</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span>
+                <span class="s1">&#39;percent&#39;</span><span class="p">:</span> <span class="n">total_attended</span><span class="p">,</span>
+                <span class="s1">&#39;student_pk&#39;</span><span class="p">:</span> <span class="n">student</span><span class="o">.</span><span class="n">pk</span>
+            <span class="p">})</span>            
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/attendance_query.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s1">&#39;course&#39;</span><span class="p">:</span> <span class="n">course</span><span class="p">,</span> <span class="s1">&#39;attendances&#39;</span><span class="p">:</span> <span class="n">attendances</span><span class="p">})</span>            </div>
+
+<div class="viewcode-block" id="export_as_csv"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.export_as_csv">[docs]</a><span class="nd">@login_required</span>
+<span class="nd">@teacher_required</span>
+<span class="k">def</span> <span class="nf">export_as_csv</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">course_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the CSV file for the attendance in course</span>
+<span class="sd">        </span>
+<span class="sd">        :param request:</span>
+<span class="sd">        :param course_name: The name of course</span>
+<span class="sd">        :type course_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">course</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Course</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">course_name</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">!=</span> <span class="n">course</span><span class="o">.</span><span class="n">teacher</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">PermissionDenied</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/csv&#39;</span><span class="p">)</span>
+    <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;attachment; filename=&quot;&#39;</span> <span class="o">+</span> <span class="n">course</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span><span class="s1">&#39;.csv&quot;&#39;</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+    <span class="n">students</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">enrollments</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;student&#39;</span><span class="p">)</span>
+    <span class="n">lectures</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">lectures</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+    <span class="n">row1</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Students&#39;</span><span class="p">]</span>
+    <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">lecture</span> <span class="ow">in</span> <span class="n">lectures</span><span class="p">:</span>
+        <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">row1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Lecture &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cnt</span><span class="p">))</span>
+
+    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row1</span><span class="p">)</span>    
+
+
+    <span class="k">for</span> <span class="n">student_</span> <span class="ow">in</span> <span class="n">students</span><span class="p">:</span>
+        <span class="n">student</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">student_</span><span class="p">[</span><span class="s1">&#39;student&#39;</span><span class="p">])</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">lecture</span> <span class="ow">in</span> <span class="n">lectures</span><span class="p">:</span>
+            <span class="n">attended</span> <span class="o">=</span> <span class="n">Attendance</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">lecture</span><span class="o">=</span><span class="n">lecture</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">student</span><span class="o">=</span><span class="n">student</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">attended</span><span class="p">:</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>    
+                
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">response</span>        </div>
+
+<div class="viewcode-block" id="course_lectures"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.course_lectures">[docs]</a><span class="nd">@login_required</span>
+<span class="nd">@teacher_required</span>
+<span class="k">def</span> <span class="nf">course_lectures</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">course_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders all the lectures for a course along with attendance status</span>
+<span class="sd">        </span>
+<span class="sd">        :param request:</span>
+<span class="sd">        :param course_name: The name of course</span>
+<span class="sd">        :type course_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">course</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Course</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">course_name</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">!=</span> <span class="n">course</span><span class="o">.</span><span class="n">teacher</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">PermissionDenied</span>
+    
+    <span class="n">students</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">enrollments</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;student&#39;</span><span class="p">)</span>
+    <span class="n">lectures</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">lectures</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">students</span><span class="p">)</span>
+    <span class="n">attendances</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">lecture</span> <span class="ow">in</span> <span class="n">lectures</span><span class="p">:</span>
+        <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">total_attended</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">student_</span> <span class="ow">in</span> <span class="n">students</span><span class="p">:</span>
+            <span class="n">student</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">student_</span><span class="p">[</span><span class="s1">&#39;student&#39;</span><span class="p">])</span>
+            <span class="n">attended</span> <span class="o">=</span> <span class="n">Attendance</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">lecture</span><span class="o">=</span><span class="n">lecture</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">student</span><span class="o">=</span><span class="n">student</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">attended</span><span class="p">:</span>
+                <span class="n">total_attended</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">total_attended</span> <span class="o">/=</span> <span class="n">total</span>
+            <span class="n">total_attended</span> <span class="o">*=</span> <span class="mi">100</span>
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="n">total_attended</span> <span class="o">=</span> <span class="mi">100</span>    
+        
+        <span class="n">attendances</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">lecture</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+            <span class="s1">&#39;lecture&#39;</span><span class="p">:</span> <span class="n">lecture</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+            <span class="s1">&#39;percent&#39;</span><span class="p">:</span> <span class="n">total_attended</span><span class="p">,</span>
+            <span class="s1">&#39;cnt&#39;</span><span class="p">:</span> <span class="n">cnt</span>
+        <span class="p">})</span>          
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/course_lectures.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;course&#39;</span><span class="p">:</span> <span class="n">course</span><span class="p">,</span> <span class="s1">&#39;lectures&#39;</span><span class="p">:</span> <span class="n">attendances</span><span class="p">})</span>            </div>
+
+<div class="viewcode-block" id="course_lecture"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.course_lecture">[docs]</a><span class="nd">@login_required</span>
+<span class="nd">@teacher_required</span>
+<span class="k">def</span> <span class="nf">course_lecture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">course_name</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders the attendance info for all the students corresponding to a lecture</span>
+<span class="sd">        </span>
+<span class="sd">        :param request:</span>
+<span class="sd">        :param course_name: The name of course</span>
+<span class="sd">        :type course_name: str</span>
+<span class="sd">        :param pk: The primary key for the lecture</span>
+<span class="sd">        :type pk: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">course</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Course</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">course_name</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">!=</span> <span class="n">course</span><span class="o">.</span><span class="n">teacher</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">PermissionDenied</span>
+    
+    <span class="n">students</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">enrollments</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;student&#39;</span><span class="p">)</span>
+    <span class="n">lecture</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Lecture</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">students</span><span class="p">)</span>
+    <span class="n">attendances</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">total_attended</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">student_</span> <span class="ow">in</span> <span class="n">students</span><span class="p">:</span>
+        <span class="n">student</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">student_</span><span class="p">[</span><span class="s1">&#39;student&#39;</span><span class="p">])</span>
+        <span class="n">attended</span> <span class="o">=</span> <span class="n">Attendance</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">lecture</span><span class="o">=</span><span class="n">lecture</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">student</span><span class="o">=</span><span class="n">student</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">attended</span><span class="p">:</span>
+            <span class="n">total_attended</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">attendances</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">student</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span>
+        <span class="s1">&#39;pk&#39;</span><span class="p">:</span> <span class="n">student</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+        <span class="s1">&#39;attended&#39;</span><span class="p">:</span> <span class="n">attended</span>
+        <span class="p">})</span>     
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">total_attended</span> <span class="o">/=</span> <span class="n">total</span>
+        <span class="n">total_attended</span> <span class="o">*=</span> <span class="mi">100</span>
+    <span class="k">else</span><span class="p">:</span>    
+        <span class="n">total_attended</span> <span class="o">=</span> <span class="mi">100</span>             
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/course_lecture.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;attendance&#39;</span><span class="p">:</span> <span class="n">total_attended</span><span class="p">,</span> <span class="s1">&#39;course&#39;</span><span class="p">:</span> <span class="n">course</span><span class="p">,</span> <span class="s1">&#39;lecture&#39;</span><span class="p">:</span> <span class="n">lecture</span><span class="p">,</span> <span class="s1">&#39;students&#39;</span><span class="p">:</span> <span class="n">attendances</span><span class="p">})</span>            </div>
+
+
+<div class="viewcode-block" id="course_students"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.course_students">[docs]</a><span class="nd">@login_required</span>
+<span class="nd">@teacher_required</span>
+<span class="k">def</span> <span class="nf">course_students</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">course_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders the attendance info for all the students in the course</span>
+<span class="sd">        </span>
+<span class="sd">        :param request:</span>
+<span class="sd">        :param course_name: The name of course</span>
+<span class="sd">        :type course_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">course</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Course</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">course_name</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">!=</span> <span class="n">course</span><span class="o">.</span><span class="n">teacher</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">PermissionDenied</span>
+    
+    <span class="n">students</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">enrollments</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;student&#39;</span><span class="p">)</span>
+    <span class="n">lectures</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">lectures</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">time__lte</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lectures</span><span class="p">)</span>
+    <span class="n">attendances</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">student_</span> <span class="ow">in</span> <span class="n">students</span><span class="p">:</span>
+        <span class="n">student</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">student_</span><span class="p">[</span><span class="s1">&#39;student&#39;</span><span class="p">])</span>
+        <span class="n">total_attended</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">lecture</span> <span class="ow">in</span> <span class="n">lectures</span><span class="p">:</span>
+            <span class="n">attended</span> <span class="o">=</span> <span class="n">Attendance</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">lecture</span><span class="o">=</span><span class="n">lecture</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">student</span><span class="o">=</span><span class="n">student</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">attended</span><span class="p">:</span>
+                <span class="n">total_attended</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">total_attended</span> <span class="o">/=</span> <span class="n">total</span>
+            <span class="n">total_attended</span> <span class="o">*=</span> <span class="mi">100</span>
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="n">total_attended</span> <span class="o">=</span> <span class="mi">100</span>    
+        
+        <span class="n">attendances</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;student&#39;</span><span class="p">:</span> <span class="n">student</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span>
+            <span class="s1">&#39;percent&#39;</span><span class="p">:</span> <span class="n">total_attended</span><span class="p">,</span>
+            <span class="s1">&#39;student_pk&#39;</span><span class="p">:</span> <span class="n">student</span><span class="o">.</span><span class="n">pk</span>
+        <span class="p">})</span>          
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/course_students.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;course&#39;</span><span class="p">:</span> <span class="n">course</span><span class="p">,</span> <span class="s1">&#39;attendances&#39;</span><span class="p">:</span> <span class="n">attendances</span><span class="p">})</span>            </div>
+
+<div class="viewcode-block" id="course_student"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.course_student">[docs]</a><span class="nd">@login_required</span>
+<span class="nd">@teacher_required</span>
+<span class="k">def</span> <span class="nf">course_student</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">course_name</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders the attendance info for a student in a course</span>
+<span class="sd">        </span>
+<span class="sd">        :param request:</span>
+<span class="sd">        :param course_name: The name of course</span>
+<span class="sd">        :type course_name: str</span>
+<span class="sd">        :param pk: The primary key for the student</span>
+<span class="sd">        :type pk: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">course</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Course</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">course_name</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">!=</span> <span class="n">course</span><span class="o">.</span><span class="n">teacher</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">PermissionDenied</span>
+
+    <span class="n">lectures</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">lectures</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">time__lte</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lectures</span><span class="p">)</span>
+    <span class="n">attendances</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">student</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    <span class="n">total_attended</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">lecture</span> <span class="ow">in</span> <span class="n">lectures</span><span class="p">:</span>
+        <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">attended</span> <span class="o">=</span> <span class="n">Attendance</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">lecture</span><span class="o">=</span><span class="n">lecture</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">student</span><span class="o">=</span><span class="n">student</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">attended</span><span class="p">:</span>
+            <span class="n">total_attended</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">attendances</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">lecture</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+        <span class="s1">&#39;present&#39;</span><span class="p">:</span> <span class="n">attended</span><span class="p">,</span>
+        <span class="s1">&#39;lecture&#39;</span><span class="p">:</span> <span class="n">lecture</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+        <span class="s1">&#39;cnt&#39;</span><span class="p">:</span> <span class="n">cnt</span>
+        <span class="p">})</span>     
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">total_attended</span> <span class="o">/=</span> <span class="n">total</span>
+        <span class="n">total_attended</span> <span class="o">*=</span> <span class="mi">100</span>
+    <span class="k">else</span><span class="p">:</span>    
+        <span class="n">total_attended</span> <span class="o">=</span> <span class="mi">100</span>             
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/course_student.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;attendance&#39;</span><span class="p">:</span> <span class="n">total_attended</span><span class="p">,</span> <span class="s1">&#39;course&#39;</span><span class="p">:</span> <span class="n">course</span><span class="p">,</span> <span class="s1">&#39;lectures&#39;</span><span class="p">:</span> <span class="n">attendances</span><span class="p">,</span> <span class="s1">&#39;student&#39;</span><span class="p">:</span> <span class="n">student</span><span class="p">})</span>            </div>
+
+<div class="viewcode-block" id="teacher_course"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.teacher_course">[docs]</a><span class="nd">@login_required</span>
+<span class="nd">@teacher_required</span>
+<span class="k">def</span> <span class="nf">teacher_course</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">course_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders the homepage for a course</span>
+<span class="sd">        </span>
+<span class="sd">        :param request:</span>
+<span class="sd">        :param course_name: The name of course</span>
+<span class="sd">        :type course_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">course</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Course</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">course_name</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">!=</span> <span class="n">course</span><span class="o">.</span><span class="n">teacher</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">PermissionDenied</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">QueryForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">attendance_query</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">course</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">QueryForm</span><span class="p">(</span><span class="n">initial</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="s1">&#39;2&#39;</span><span class="p">})</span>        
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/teacher_course.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;course&#39;</span><span class="p">:</span> <span class="n">course</span><span class="p">,</span> <span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span>   </div>
+
+<div class="viewcode-block" id="my_courses"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.my_courses">[docs]</a><span class="nd">@login_required</span>
+<span class="nd">@student_required</span>
+<span class="k">def</span> <span class="nf">my_courses</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders all the courses in which the student has enrolled</span>
+<span class="sd">        </span>
+<span class="sd">        :param request:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">enrolled</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">enrollments</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;course&#39;</span><span class="p">)</span>
+    <span class="n">enrolled</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;course&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">enrolled</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/student_my_courses.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;courses&#39;</span><span class="p">:</span> <span class="n">enrolled</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="student_course"><a class="viewcode-back" href="../../modules/attendance-views.html#attendance.views.student_course">[docs]</a><span class="nd">@login_required</span>
+<span class="nd">@student_required</span>
+<span class="k">def</span> <span class="nf">student_course</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">course_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders the lecture-wise attendance info for a student</span>
+<span class="sd">    </span>
+<span class="sd">    :param request:</span>
+<span class="sd">    :param course_name: The name of course</span>
+<span class="sd">    :type course_name: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">course</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Course</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">course_name</span><span class="p">)</span>
+    <span class="n">enrolled</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">enrollments</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;course&#39;</span><span class="p">)</span>
+    <span class="n">is_enrolled</span> <span class="o">=</span>  <span class="n">course</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;course&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">enrolled</span><span class="p">]</span>
+    <span class="c1"># print(course, enrolled, is_enrolled)</span>
+    <span class="n">lectures</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">attendance_per</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_enrolled</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+            <span class="n">enrollment</span> <span class="o">=</span> <span class="n">Enrollment</span><span class="p">(</span><span class="n">student</span> <span class="o">=</span> <span class="n">user</span><span class="p">,</span> <span class="n">course</span> <span class="o">=</span> <span class="n">course</span><span class="p">)</span>
+            <span class="n">enrollment</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;student_course&#39;</span><span class="p">,</span> <span class="n">course_name</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">alllectures</span> <span class="o">=</span> <span class="n">Lecture</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">course</span><span class="o">=</span><span class="n">course</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>  
+        <span class="n">lecno</span> <span class="o">=</span> <span class="mi">0</span>  
+        <span class="n">user</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="n">num_attendend</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">lecture</span> <span class="ow">in</span> <span class="n">alllectures</span><span class="p">:</span>
+            <span class="n">lecno</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="n">lecture</span><span class="o">.</span><span class="n">time</span>
+            <span class="n">attended</span> <span class="o">=</span> <span class="n">Attendance</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">lecture</span><span class="o">=</span><span class="n">lecture</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">student</span><span class="o">=</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+            
+            <span class="k">if</span> <span class="n">attended</span><span class="p">:</span>
+                <span class="n">num_attendend</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">lectures</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;lecno&#39;</span><span class="p">:</span> <span class="n">lecno</span><span class="p">,</span>
+                <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span>
+                <span class="s1">&#39;attended&#39;</span><span class="p">:</span> <span class="n">attended</span>
+            <span class="p">})</span>
+
+            
+        <span class="k">if</span> <span class="n">lecno</span><span class="p">:</span>
+            <span class="n">attendance_per</span> <span class="o">=</span> <span class="n">num_attendend</span> <span class="o">/</span> <span class="n">lecno</span>
+        <span class="n">attendance_per</span> <span class="o">*=</span> <span class="mi">100</span>
+
+
+    <span class="c1"># print(lectures)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;attendance/student_course.html&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s1">&#39;is_enrolled&#39;</span><span class="p">:</span> <span class="n">is_enrolled</span><span class="p">,</span> <span class="s1">&#39;course&#39;</span><span class="p">:</span> <span class="n">course</span><span class="p">,</span> <span class="s1">&#39;lectures&#39;</span><span class="p">:</span> <span class="n">lectures</span><span class="p">,</span> <span class="s1">&#39;attendance_per&#39;</span><span class="p">:</span> <span class="n">attendance_per</span><span class="p">})</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Saurabh Bansal
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

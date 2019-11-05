@@ -83,7 +83,7 @@ def ApiView(request, classroom_id):
 		lec = lec.order_by('time').first()
 		# lec = Lecture.objects.all()
 		response_data = GETSerializer(lec, many=False).data
-		response_data['current_time'] = timezone.now()
+		response_data['current_time'] = timezone.localtime()
 		return Response(response_data)
 		# return HttpResponse("Yo")
 		# pass
@@ -107,6 +107,7 @@ def ApiView2(request):
 		# return HttpResponse("Yo")
 	if request.method == 'POST':
 		attendanceData = request.data
+		print(attendanceData)
 		student = get_object_or_404(User, username=attendanceData["roll_number"])
 		lecture = get_object_or_404(Lecture, pk=attendanceData["lecture_id"])
 		# course = lecture.
@@ -115,7 +116,7 @@ def ApiView2(request):
 		print(test)
 		kull = Enrollment.objects.filter(course=lecture.course, student=student.pk)
 		print(kull)
-		
+
 		if kull:
 			Attendance.objects.create(
 				student=student,

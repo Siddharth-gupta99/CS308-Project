@@ -9,9 +9,12 @@ import csv
 from django.http import HttpResponse
 from django.utils import timezone
 
-def home(request):
 
-    # print("hello")
+def home(request):
+    """Renders a homepage for every type of user.
+
+        :param request:
+        """
     if request.user.is_authenticated:
         if request.user.is_student:
             courses = Course.objects.all().values()
@@ -32,6 +35,12 @@ def home(request):
 @login_required
 @teacher_required
 def course_schedule(request, course_name):
+    """Renders the form for scheduling a lecture for a course and schedules it
+        
+        :param request:
+        :param course_name: The name of course
+        :type course_name: str
+        """
     course = get_object_or_404(Course, name=course_name)
     
     if (request.user != course.teacher):
@@ -57,6 +66,14 @@ def course_schedule(request, course_name):
     return render(request, 'attendance/new_lecture.html', {'form': form, 'course': course})            
 
 def attendance_query(request, form, course):
+    """Renders the data about students with attendance greater/lesser than a value
+        
+        :param request:
+        :param form: The form used for requesting information
+        :type form: QueryForm
+        :param course: relevant course
+        :type course: Course
+        """
     students = course.enrollments.values('student')
     lectures = course.lectures.all().filter(time__lte=timezone.localtime())
     total = len(lectures)
@@ -98,6 +115,12 @@ def attendance_query(request, form, course):
 @login_required
 @teacher_required
 def export_as_csv(request, course_name):
+    """Returns the CSV file for the attendance in course
+        
+        :param request:
+        :param course_name: The name of course
+        :type course_name: str
+        """
     course = get_object_or_404(Course, name=course_name)
     
     if (request.user != course.teacher):
@@ -139,6 +162,12 @@ def export_as_csv(request, course_name):
 @login_required
 @teacher_required
 def course_lectures(request, course_name):
+    """Renders all the lectures for a course along with attendance status
+        
+        :param request:
+        :param course_name: The name of course
+        :type course_name: str
+        """
     course = get_object_or_404(Course, name=course_name)
     
     if (request.user != course.teacher):
@@ -179,6 +208,14 @@ def course_lectures(request, course_name):
 @login_required
 @teacher_required
 def course_lecture(request, course_name, pk):
+    """Renders the attendance info for all the students corresponding to a lecture
+        
+        :param request:
+        :param course_name: The name of course
+        :type course_name: str
+        :param pk: The primary key for the lecture
+        :type pk: int
+        """
     course = get_object_or_404(Course, name=course_name)
     
     if (request.user != course.teacher):
@@ -215,6 +252,12 @@ def course_lecture(request, course_name, pk):
 @login_required
 @teacher_required
 def course_students(request, course_name):
+    """Renders the attendance info for all the students in the course
+        
+        :param request:
+        :param course_name: The name of course
+        :type course_name: str
+        """
     course = get_object_or_404(Course, name=course_name)
     
     if (request.user != course.teacher):
@@ -252,6 +295,14 @@ def course_students(request, course_name):
 @login_required
 @teacher_required
 def course_student(request, course_name, pk):
+    """Renders the attendance info for a student in a course
+        
+        :param request:
+        :param course_name: The name of course
+        :type course_name: str
+        :param pk: The primary key for the student
+        :type pk: int
+        """
     course = get_object_or_404(Course, name=course_name)
     
     if (request.user != course.teacher):
@@ -289,6 +340,12 @@ def course_student(request, course_name, pk):
 @login_required
 @teacher_required
 def teacher_course(request, course_name):
+    """Renders the homepage for a course
+        
+        :param request:
+        :param course_name: The name of course
+        :type course_name: str
+        """
     course = get_object_or_404(Course, name=course_name)
     
     if (request.user != course.teacher):
@@ -307,6 +364,10 @@ def teacher_course(request, course_name):
 @login_required
 @student_required
 def my_courses(request):
+    """Renders all the courses in which the student has enrolled
+        
+        :param request:
+        """
     enrolled = request.user.enrollments.values('course')
     enrolled = [item['course'] for item in enrolled]
     return render(request, 'attendance/student_my_courses.html', {'courses': enrolled})
@@ -314,6 +375,12 @@ def my_courses(request):
 @login_required
 @student_required
 def student_course(request, course_name):
+    """Renders the lecture-wise attendance info for a student
+    
+    :param request:
+    :param course_name: The name of course
+    :type course_name: str
+    """
     course = get_object_or_404(Course, pk=course_name)
     enrolled = request.user.enrollments.values('course')
     is_enrolled =  course.name in [item['course'] for item in enrolled]
