@@ -1,5 +1,6 @@
 # Developer Guide
 
+
 ### Prerequisites
 * Azure subscription - [create one for free][ 1 ]
 * Python 3.x
@@ -13,6 +14,7 @@ $ pip install --upgrade azure-cognitiveservices-vision-face
 ```
 
 Install the following python libraries.
+
 
 ```sh
 $ pip install urllib3

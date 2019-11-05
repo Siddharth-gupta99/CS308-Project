@@ -34,6 +34,7 @@ source_parsers = {
    '.md': 'recommonmark.parser.CommonMarkParser',
 }
 
+# Theme used
 html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -49,6 +50,9 @@ source_suffix = ['.rst', '.md']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
+
+
+# Default theme
 #html_theme = 'alabaster'
 
 # Add any paths that contain custom static files (such as style sheets) here,
