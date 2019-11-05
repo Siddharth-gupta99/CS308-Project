@@ -48,5 +48,5 @@ Signup as a student and login. You can enroll for courses, see your attendance f
 # Developer Documentation
 
 ## Web Portal
-The dev documentation for Web Portal is at [https://github.com/Siddharth-gupta99/CS308-Project/blob/master/webportal.md](https://github.com/Siddharth-gupta99/CS308-Project/blob/master/webportal.md).
+The dev documentation for Web Portal can be found by opening [this](https://github.com/Siddharth-gupta99/CS308-Project/blob/master/attendance_portal/docs/_build/html/index.html) file in a web browser when the code is at your local machine.
 
