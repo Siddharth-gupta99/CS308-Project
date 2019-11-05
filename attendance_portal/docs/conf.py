@@ -12,10 +12,11 @@
 #
 import os
 import sys
+import django
 
 sys.path.insert(0, os.path.abspath('..'))
-from django.conf import settings
-settings.configure()
+os.environ['DJANGO_SETTINGS_MODULE'] = 'attendance_portal.settings'
+django.setup()
 
 
 # -- Project information -----------------------------------------------------
@@ -33,7 +34,7 @@ release = '1.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
+extensions = ['sphinx.ext.autodoc', 'recommonmark'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -44,6 +45,7 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+source_suffix = ['.rst', '.md']
 
 # -- Options for HTML output -------------------------------------------------
 
