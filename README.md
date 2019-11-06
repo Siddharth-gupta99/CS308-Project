@@ -45,8 +45,10 @@ Signup as a student and login. You can enroll for courses, see your attendance f
 	2. >   python manage.py runserver
 2. Go to admin url (host/admin) and login.
 
-# Developer Documentation
+# Documentation
 
 ## Web Portal
 The dev documentation for Web Portal can be found by opening [this](https://github.com/Siddharth-gupta99/CS308-Project/blob/master/attendance_portal/docs/_build/html/index.html) file in a web browser when the code is at your local machine.
 
+## User & Face Recognition (Developer) Documentation
+The dev documentation for Face Detection can be found by opening [this](https://github.com/Siddharth-gupta99/CS308-Project/blob/master/MicrosoftAPI/FaceRecognition_Documentation/docs/_build/html/index.html) file in a web browser when the code is at your local machine.
