@@ -1,5 +1,6 @@
 # Developer Guide
 
+
 ### Prerequisites
 * Azure subscription - [create one for free][ 1 ]
 * Python 3.x
@@ -8,13 +9,13 @@
 
 ### Installation 
 Install the client library
-```sh
+```py
 $ pip install --upgrade azure-cognitiveservices-vision-face
 ```
 
 Install the following python libraries.
 
-```sh
+```py
 $ pip install urllib3
 $ pip install Pillow
 $ pip install msrest
@@ -37,7 +38,7 @@ Create a resource for the Face using [Microsoft Azure](https://docs.microsoft.co
 
 #### Create a new python application
 Creata a new python script, for example - FaceIdentification.py. Then open it in your preferred text editor and import the following libraries.
-```sh
+```py
 import asyncio, io, glob, os, sys, time, uuid, requests, subprocess
 from urllib.parse import urlparse
 import math, datetime, logging
@@ -52,7 +53,7 @@ from azure.cognitiveservices.vision.face.models import TrainingStatusType, Perso
 ```
 
 Then create variables for Azure's Endpoint and Key. 
-```sh
+```py
 KEY = 'FACE_SUBSCRIPTION_KEY'
 ENDPOINT = 'FACE_ENDPOINT'
 ```
@@ -62,7 +63,7 @@ ENDPOINT = 'FACE_ENDPOINT'
 
 ### Authenticate the client
 Use Key and Endpoint to initiate a client. Create a [CognitiveServicesCredentials](https://docs.microsoft.com/python/api/msrest/msrest.authentication.cognitiveservicescredentials?view=azure-python) object with the help of key, and use it with your endpoint to create a [FaceClient](https://docs.microsoft.com/en-gb/python/api/azure-cognitiveservices-vision-face/azure.cognitiveservices.vision.face.faceclient?view=azure-python) object.
-```sh
+```py
 face_client = FaceClient(ENDPOINT, CognitiveServicesCredentials(KEY))
 ```
 
@@ -76,7 +77,7 @@ To step through this scenario, you need to save the training images to the root 
 This group of images contains three sets of face images corresponding to various people. The code will define the **Person** objects equal to the number of folders in a directory and associate them with the image files in corresponding folder.
 
 Define a lable for the **PersonGroup** object that we will create.
-```sh
+```py
 # SOURCE_PERSON_GROUP_ID should be all lowercase and alphanumeric. For example, 'mygroupname' (dashes are OK).
 PERSON_GROUP_ID = 'Your-Person-Group'
 # Used for the Snapshot and Delete Person Group examples.
@@ -86,13 +87,13 @@ TARGET_PERSON_GROUP_ID = str(uuid.uuid4()) # assign a random ID (or name it anyt
 **Note** - You can also use list_person_groups to list all preexisting **PersonGroups**
 
 Add the following code to the bottom of your script. It will create a **PersonGroup** with the above defined labels.
-```sh
+```py
 face_client.person_group.create(person_group_id=PERSON_GROUP_ID, name=PERSON_GROUP_ID)
 ```
 
 #### Assign faces to persons
 The following code will create **Person** objects and assign the faces to each **Person** object.
-```sh
+```py
 for student_name in os.listdir('./Dataset'):
     # Define a student friend 
     student = face_client.person_group_person.create(PERSON_GROUP_ID, student_name)
@@ -116,7 +117,7 @@ for student_name in os.listdir('./Dataset'):
 #### Train PersonGroup
 Once you've assigned faces, you must train the **PersonGroup** so that it can identify the visual features associated with each of its Person objects. The following code calls the asynchronous **train** method and polls the result, printing the status to the console.
 
-```sh
+```py
 ''' 
 Train PersonGroup
 '''
@@ -138,7 +139,7 @@ Installed the Raspbian OS on raspberry-pi.
 [Click here](https://thepi.io/how-to-install-raspbian-on-the-raspberry-pi/) for installation instructions.<br>
 Create the variables which will be used later.
 
-```sh
+```py
 #Time in seconds to wait between successive requests to the server.
 FETCH_INTERVAL = 60
 # Time in seconds to wait before checking for the next scheduled class.
@@ -168,12 +169,35 @@ THRESHOLD = 0.6
 
 Run updateConfig.py to change the above variables incase some variables gets modified on the server.
 
+### Initialization of the service
+The `updateConfig.py` script can be run which will first check if the version on the server is same as the one present locally. If there is a mismatch, the whole configuration file is updated with that on the server. If no changes are to be made, the config file calls the main script, which is `face-service-daemon.py`.
+
+### Running the main service
+The `face-service-daemon.py` script is the main script which handles the requests to the API, capturing the photos and indentification of the faces using Microsoft Azure Face Service. 
+
+#### `fetchAndCheck()`
+This function fetches the next scheduled lecture time from the server defined by `API_GET_SCHEDULE` variable in the `config.py`. This start and end time for taking the attendance are calculated. 
+```py
+        # If the time is in the given window around the scheduled time, 
+        # return True and the start and end time for taking attendance.
+        if currentTime >= leftTimeDelta and currentTime <= rightTimeDelta:
+            logging.info("Attendance taking to be started now.")
+            LECTURE_ID = nextScheduleTime["id"]
+            return True, {'start':leftTimeDelta, 'end':rightTimeDelta}
+```
+The current time is compared against these start and end times. If the current time is in the given interval, True is returned to the caller along with these start and end times. Otherwise, False is returned.
+
+#### `captureImages()`
+This function runs in a separate thread and the task of this function is to capture the pictures repeatedly after a certain interval. The method runs till the current time exceeds the end time for the attendance. The captured images are encoded and are pushed in a shared queue, from where those can be retrieved by the identifyFaces thread.
+
+#### `identifyFaces()`
+This function too runs in a separate thread. The images captured and sent by the captureImage thread are first sent to the Microsoft Azure Face API for *detection* of faces. Once the faces are detected, those can be identified using the `face_client.face.identify()` method provided in the **Face SKD**. The identified students' information is sent to the API for marking their attendance.
 
 ### Identify a face
 The following code takes an image with multiple faces and looks to find the identity of each person in the image. It compares each detected face to a PersonGroup, a database of different Person objects whose facial features are known.
 
 #### Get the API status
-```sh
+```py
 training_status = face_client.person_group.get_training_status(PERSON_GROUP_ID)
 print("Training status: {}.".format(training_status.status))
 ```
@@ -181,7 +205,7 @@ print("Training status: {}.".format(training_status.status))
 #### Get a test image
 The following code looks in the root of your project for an image test-image-example.jpg and detects the faces in the image.
 
-```sh
+```py
 '''
 Identify a face against a defined PersonGroup
 '''
@@ -196,7 +220,7 @@ image = open(test_image_array[0], 'r+b')
 
 #### Detect faces in an image
 Faces will be detected and features will be stored in an array.
-```sh
+```py
 # Detect faces
 face_ids = []
 faces = face_client.face.detect_with_stream(image)
@@ -207,7 +231,7 @@ for face in faces:
 #### Identify faces
 The identify method takes an array of detected faces and compares them to a PersonGroup. If it can match a detected face to a Person, it saves the result. This code prints detailed match results to the console.
 
-```sh
+```py
 # Identify faces
 results = face_client.face.identify(face_ids, PERSON_GROUP_ID)
 print('Identifying faces in {}')

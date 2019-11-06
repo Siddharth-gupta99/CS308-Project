@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>User Guide &mdash; Attendance System via Face Recognition  documentation</title>
+  <title>User Documentation &mdash; Attendance System via Face Recognition  documentation</title>
   
 
   
@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer Info" href="Devinfo.html" />
     <link rel="prev" title="Developer Guide" href="developer.html" /> 
 </head>
 
@@ -82,10 +83,22 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Guide</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#contents"><strong>Contents</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preface">1. <strong>Preface</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">2. <strong>Introduction</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#components">3. <strong>Components</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#attendance-portal-server"><strong>3.1 Attendance Portal (Server)</strong></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#student-portal"><strong>3.1.1 Student Portal</strong></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#teacher-portal"><strong>3.1.2 Teacher Portal</strong></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#raspberry-pi-client"><strong>3.2 Raspberry Pi (Client)</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Devinfo.html">Developer Info</a></li>
 </ul>
 
             
@@ -131,7 +144,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>User Guide</li>
+      <li>User Documentation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -150,10 +163,58 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="user-guide">
-<h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="user-documentation">
+<h1>User Documentation<a class="headerlink" href="#user-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="contents">
+<h2><strong>Contents</strong><a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<ol class="simple">
+<li><p><a class="reference external" href="#preface">Preface</a></p></li>
+<li><p><a class="reference external" href="#introduction">Introduction</a></p></li>
+<li><p><a class="reference external" href="#components">Components</a></p>
+<ol class="simple">
+<li><p><a class="reference external" href="#attendance-portal-server">Attendance Portal (Server)</a></p></li>
+<li><p><a class="reference external" href="#raspberry-pi-client">Raspberry Pi (Client)</a></p></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="preface">
+<h2>1. <strong>Preface</strong><a class="headerlink" href="#preface" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>This document is targeted to the end user who will be using the Face Recognition Attendance System. It provides steps to set up the attendance system, procedures to use it and explanations to various features of the said system. The actual working of the internals of the system and relevant information related to it is provided in the <a class="reference internal" href="developer.html"><span class="doc">Developer Documentation</span></a> which is targeted at the developers and maintainers who will work on the system on the implementation side.</p>
+<p>Currently the product is in development mode,  hence the users might face issues and come across bugs. These issues will gradually be addressed in the subsequent versions of the product via software updates and patches.</p>
+<p>This document tries to cover all the usable aspects of the product with adequate explanations and use cases if required. Absence of any feature in the document is either intentional , the feature being of no direct use to the user or will be added in further editions.</p>
+</div>
 <div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<h2>2. <strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>Face Recognition Attendance System</strong> is a multi access point automatic attendance marking system that aims to make the task of taking attendance less cumbersome. This system takes over the conventional methods of taking attendance including roll calls and signing the attendance sheet, while also providing solution to a widespread problem among academic institutes: Proxy Attendance. This is kept in check by the use of <a class="reference external" href="https://azure.microsoft.com/en-in/services/cognitive-services/face/"><strong>Microsoft Azure Face</strong></a> <a class="reference external" href="https://azure.microsoft.com/en-in/services/cognitive-services/face/">Recognition Service</a> for the actual task of facial recognition which is Microsoft’s state-of-the-art Facial Analysis Cognitive Service.</p>
+<p>To mark the attendance, students just have to stand infront of one of the access points and their attendance will be registered with the system, which they can cross check on the system’s Student Portal. On the other hand, this makes organisation and maintenance of the attendance records for the course incharges a lot easier as the <a class="reference external" href="#">Faculty Portal</a> also provides a comprehensive analysis of the data collected along with the simple attendance records for each student.</p>
+</div>
+<div class="section" id="components">
+<h2>3. <strong>Components</strong><a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>The Face Recognition Attendance System follow the <em>Server-Client</em> model with the Server being on the institute’s local network hosting various portals and a RESTful API for communication with the client machines while the clients being Raspberry Pi machines installed inside the classrooms controlling the cameras.</p>
+<div class="section" id="attendance-portal-server">
+<h3><strong>3.1 Attendance Portal (Server)</strong><a class="headerlink" href="#attendance-portal-server" title="Permalink to this headline">¶</a></h3>
+<p>The attendance portal hosts the user front ends for interaction with the students and faculty. It also provides the API endpoints which are used by the client machines for communicating with the server for schedule fetching and attendance marking. The server has two main ends:</p>
+<div class="section" id="student-portal">
+<h4><strong>3.1.1 Student Portal</strong><a class="headerlink" href="#student-portal" title="Permalink to this headline">¶</a></h4>
+<p>Students portal can be accessed by going to the <code class="docutils literal notranslate"><span class="pre">/signup/student/</span></code> endpoint on the server, where the student can register for the portal. Once he has an account on the service, he can check his attendance of the courses he has, in real time.</p>
+</div>
+<div class="section" id="teacher-portal">
+<h4><strong>3.1.2 Teacher Portal</strong><a class="headerlink" href="#teacher-portal" title="Permalink to this headline">¶</a></h4>
+<p>Similar to the students, teachers also can register by going to the <code class="docutils literal notranslate"><span class="pre">/signup/teacher/</span></code> endpoint. Teachers have the facility to view all the students enrolled to the courses he is taking, see their attendance. The teacher can also schedule a lecture, which will enable the client side of the system to be activated at the appropriate time.	
+<img alt="Signup Image" src="signup.png" /></p>
+</div>
+</div>
+<div class="section" id="raspberry-pi-client">
+<h3><strong>3.2 Raspberry Pi (Client)</strong><a class="headerlink" href="#raspberry-pi-client" title="Permalink to this headline">¶</a></h3>
+<p>The raspberry pi machines are installed in every classroom, their number being governed by the capacity of the class; for example, for a class of 100 students, four access points are sufficient. The raspberry pi’s are running on Arch linux with the <code class="docutils literal notranslate"><span class="pre">face-recognition-daemon</span></code> installed on them. As soon as the devices boot up, they start the daemon which connects them to the server.
+Every 10 minutes the server is pinged via the API endpoint to fetch the next scheduled class and its time. If there is a class in the 20 minutes margin from the current time, the daemon starts taking pictures which are then analyzed by the Face API provided by the Microsoft Face SDK. If a student is identified in the picture, his/her roll number is sent to the server by using POST method on the API endpoint.
+The configurations for the raspberry pi can be changed from the <code class="docutils literal notranslate"><span class="pre">config.py</span></code> file.</p>
+</div>
 </div>
 </div>
 
@@ -164,6 +225,8 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Devinfo.html" class="btn btn-neutral float-right" title="Developer Info" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="developer.html" class="btn btn-neutral float-left" title="Developer Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
