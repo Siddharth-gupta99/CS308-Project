@@ -13,7 +13,7 @@ class NewLectureForm(forms.ModelForm):
                 validators=[MinValueValidator(timezone.localtime())]
                 ) 
     num_weeks = forms.IntegerField(label='Repeat for(in weeks):', required=True, initial=1, 
-    help_text='1 for one time lectures, max 14', validators=[MaxValueValidator(14)])
+    help_text='1 for one time lectures, max 14', validators=[MaxValueValidator(14), MinValueValidator(1)])
 
     class Meta:
         model = Lecture

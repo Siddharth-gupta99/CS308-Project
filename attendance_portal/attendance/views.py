@@ -56,13 +56,15 @@ def course_schedule(request, course_name):
         form = NewLectureForm(post) 
 
         if form.is_valid():
-            lecture = form.save(commit=False)
-            lecture.course = course
+            num_weeks = form.cleaned_data['num_weeks']
 
-            for i in range(lecture.num_weeks):
+            for i in range(num_weeks):
+                lecture = form.save(commit=False)
+                lecture.course = course
                 lecture.time += (i * datetime.timedelta(days = 7))
                 lecture.save()
-                
+                form = NewLectureForm(post) 
+
             return redirect('home')
 
     else:

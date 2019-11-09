@@ -1,5 +1,5 @@
-from attendance_portal.accounts.models import User
-from attendance_portal.attendance.models import Course, Enrollment
+from accounts.models import User
+from attendance.models import Course, Enrollment
 
 users = [
     {'username':'Rohit', 'password':'Rohitpassword', 'name':'Rohit', 'is_student': True, 'is_teacher': False},
