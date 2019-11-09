@@ -8,6 +8,7 @@ from accounts.models import User
 import csv
 from django.http import HttpResponse
 from django.utils import timezone
+import datetime
 
 
 def home(request):
@@ -57,7 +58,11 @@ def course_schedule(request, course_name):
         if form.is_valid():
             lecture = form.save(commit=False)
             lecture.course = course
-            lecture.save()
+
+            for i in range(lecture.num_weeks):
+                lecture.time += (i * datetime.timedelta(days = 7))
+                lecture.save()
+                
             return redirect('home')
 
     else:
@@ -396,7 +401,7 @@ def student_course(request, course_name):
             return redirect('student_course', course_name)
 
     else:
-        alllectures = Lecture.objects.filter(course=course).order_by('time')  
+        alllectures = Lecture.objects.filter(course=course).filter(time__lte=timezone.localtime()).order_by('time')  
         lecno = 0  
         user = request.user
         num_attendend = 0

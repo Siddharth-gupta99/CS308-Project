@@ -38,6 +38,7 @@ class Lecture(models.Model):
     time = models.DateTimeField(null=False, default=timezone.localtime())
     duration = models.DurationField(null=False, default=Datetime.timedelta(days=0, hours=1),
                 validators=[MinValueValidator(Datetime.timedelta(days=0, hours=1, minutes=0))])
+    num_weeks = models.IntegerField(null=False, default=1)            
     Class = models.IntegerField(null=False,
         choices=(
         (1, "A10-1A"),

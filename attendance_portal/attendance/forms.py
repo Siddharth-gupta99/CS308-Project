@@ -11,10 +11,13 @@ class NewLectureForm(forms.ModelForm):
     time = forms.DateTimeField(label='Time', 
                 widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
                 validators=[MinValueValidator(timezone.localtime())]
-                )  
+                ) 
+    num_weeks = forms.IntegerField(label='Repeat for(in weeks):', required=True, initial=1, 
+    help_text='1 for one time lectures, max 14', validators=[MaxValueValidator(14)])
+
     class Meta:
         model = Lecture
-        fields = ('time', 'duration', 'Class')       
+        fields = ('time', 'duration', 'Class', 'num_weeks')       
 
 class QueryForm(forms.Form):
     CHOICES = (
