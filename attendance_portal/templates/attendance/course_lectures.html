@@ -18,6 +18,8 @@
                     <th>Lecture No.</th>
                     <th>Time</th>
                     <th>Attendance</th>
+                    <th> Update Link </th>
+                    <th> Delete Link </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,6 +33,12 @@
                         </td>
                         <td class="align-middle">
                             {{ lecture.percent }} %    
+                        </td>
+                        <td>
+                            <a class="btn btn-info" href="/teachers/course/{{ course.name }}/lecture_modify/{{ lecture.lecture }}"> Update </a>
+                        </td>
+                        <td>
+                            <a class="btn btn-danger" href="/teachers/course/{{ course.name }}/lecture_delete/{{ lecture.lecture }}"> Delete </a>
                         </td>
                     </tr>
                     {% endfor %}

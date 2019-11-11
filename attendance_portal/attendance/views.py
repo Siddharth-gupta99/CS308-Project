@@ -3,7 +3,7 @@ from .models import Course, Enrollment, Lecture, Attendance
 from .decorators import student_required, teacher_required
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from .forms import NewLectureForm, QueryForm
+from .forms import NewLectureForm, QueryForm, UpdateLectureForm
 from accounts.models import User
 import csv
 from django.http import HttpResponse
@@ -211,6 +211,46 @@ def course_lectures(request, course_name):
         })          
 
     return render(request, 'attendance/course_lectures.html', {'course': course, 'lectures': attendances})            
+
+@login_required
+@teacher_required
+def lecture_modify(request, course_name, pk):
+    course = get_object_or_404(Course, name=course_name)
+    
+    if (request.user != course.teacher):
+        raise PermissionDenied
+    
+    lecture = get_object_or_404(Lecture, pk=pk)
+
+    if request.method == 'POST':
+        post = request.POST.copy()
+        d = request.POST['time']
+        d = d.replace("T", " ")
+        d = d + ":00"
+        post['time'] = d;
+        form = UpdateLectureForm(post, instance=lecture) 
+
+        if form.is_valid():
+            lecture = form.save(commit=False)    
+            lecture.save()
+            return redirect('home')
+
+    else:
+        form = UpdateLectureForm(instance=lecture)
+
+    return render(request, 'attendance/lecture_modify.html', {'form': form, 'course': course})
+
+@login_required
+@teacher_required
+def lecture_delete(request, course_name, pk):
+    course = get_object_or_404(Course, name=course_name)
+    
+    if (request.user != course.teacher):
+        raise PermissionDenied
+    
+    lecture = get_object_or_404(Lecture, pk=pk)
+    Lecture.objects.filter(pk=pk).delete()    
+    return redirect('home')
 
 @login_required
 @teacher_required

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %} Update Lecture {% endblock %}
+
+{% block content %}
+    <div class='middle'>
+        <div class='container'>
+            <br> <br>
+            <h3>Update lecture for <a href="/teachers/course/{{ course.name }}">{{ course.name }}</a> </h3>
+            <br>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% include 'includes/forms.html' with form=form %}
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+        </div>
+    </div> 
+{% endblock %}

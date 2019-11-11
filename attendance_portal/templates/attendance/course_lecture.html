@@ -12,6 +12,15 @@
             </div>
             <br>
             <div class="row">
+                <div class="col-3">            
+                    <a class="btn btn-info" href="/teachers/course/{{ course.name }}/lecture_modify/{{ lecture.pk }}"> Update Lecture</a>
+                </div>   
+                <div class="col-3">            
+                    <a class="btn btn-danger" href="/teachers/course/{{ course.name }}/lecture_delete/{{ lecture.pk }}"> Delete Lecture</a>
+                </div> 
+            </div>
+            <br>
+            <div class="row">
                 <h4>Attendance = {{ attendance }} %</h4>
             </div>
             <br>
